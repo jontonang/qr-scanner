@@ -394,25 +394,43 @@ function updateLogDisplay() {
 }
 
 // Send data to Excel (via Microsoft Graph API)
+// Send data to Excel via SharePoint (using sharing link)
 async function sendToExcel(record) {
+    if (CONFIG.testMode) {
+        console.log('Test Mode: Would send to Excel:', record);
+        showStatus('✅ Attendance recorded (Test Mode)', 'success');
+        return;
+    }
+    
     try {
-        // This will be implemented when you set up Azure AD
-        showStatus('Sending to Excel...', 'success');
+        showStatus('💾 Saving to Excel...', 'success');
         
-        // For now, just simulate success
-        setTimeout(() => {
-            showStatus('✅ Saved to Excel successfully!', 'success');
-        }, 1000);
+        // Prepare data for Excel row
+        const rowData = {
+            event: record.event,
+            name: record.name,
+            email: record.email,
+            timestamp: record.displayTime,
+            status: "Checked In"
+        };
         
-        // Real implementation would use Microsoft Graph API
-        // See next steps for Azure setup
+        // Use a serverless function or Power Automate to write to Excel
+        // Since direct browser access to SharePoint requires authentication,
+        // we'll use a hybrid approach
+        
+        // Option 1: Save locally and provide export
+        saveToLocalStorage(rowData);
+        showStatus('✅ Saved locally! Export to Excel when done.', 'success');
+        
+        // Option 2: Use Power Automate (recommended)
+        // await sendToPowerAutomate(rowData);
         
     } catch (error) {
         console.error('Error sending to Excel:', error);
-        showStatus('⚠️ Saved locally, but failed to sync with Excel', 'error');
+        showStatus('⚠️ Saved locally, will retry sync later', 'error');
+        saveToRetryQueue(record);
     }
 }
-
 // Show status message
 function showStatus(message, type) {
     const statusDiv = document.getElementById('status-message');
