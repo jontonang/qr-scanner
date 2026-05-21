@@ -37,21 +37,213 @@ function startScanner() {
         qrbox: { width: 250, height: 250 }
     };
 
-    html5QrCode.start(
-        { facingMode: "environment" }, // Use back camera
-        config,
-        onScanSuccess,
-        onScanError
-    ).then(() => {
-        isScanning = true;
-        document.getElementById('startScanBtn').style.display = 'none';
-        document.getElementById('stopScanBtn').style.display = 'inline-block';
-        showStatus('Scanner active - point camera at QR code', 'success');
-    }).catch(err => {
-        console.error('Error starting scanner:', err);
-        showStatus('Error: Could not access camera. Please allow camera permissions.', 'error');
+// QR Scanner Input Handler for USB/Bluetooth Scanner
+let scanTimeout;
+let lastScannedData = '';
+let lastScanTime = 0;
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('QR Scanner Input System initialized');
+    setupScannerInput();
+    loadAttendanceLog();
+});
+
+// Setup scanner input handling
+function setupScannerInput() {
+    const qrInput = document.getElementById('qrInput');
+    const scanIndicator = document.getElementById('scanIndicator');
+    
+    // Keep input focused at all times
+    qrInput.focus();
+    
+    // Refocus if user clicks elsewhere
+    document.addEventListener('click', function() {
+        qrInput.focus();
+    });
+    
+    // Handle input from scanner
+    qrInput.addEventListener('input', function(e) {
+        // Show scanning indicator
+        scanIndicator.className = 'scan-indicator scanning';
+        scanIndicator.innerHTML = '<span class="pulse"></span> Scanning...';
+        
+        // Clear previous timeout
+        clearTimeout(scanTimeout);
+    });
+    
+    // Handle Enter key (scanner sends this after scan)
+    qrInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            
+            const scannedData = this.value.trim();
+            const currentTime = Date.now();
+            
+            // Prevent duplicate scans (within 2 seconds)
+            if (scannedData === lastScannedData && 
+                (currentTime - lastScanTime) < 2000) {
+                console.log('Duplicate scan ignored');
+                this.value = '';
+                this.focus();
+                return;
+            }
+            
+            if (scannedData) {
+                // Update last scan info
+                lastScannedData = scannedData;
+                lastScanTime = currentTime;
+                
+                // Process the scanned data
+                processScannedData(scannedData);
+                
+                // Clear input for next scan
+                this.value = '';
+                
+                // Show success indicator
+                scanIndicator.className = 'scan-indicator success';
+                scanIndicator.innerHTML = '<span class="pulse"></span> Scan Successful!';
+                
+                // Reset indicator after 2 seconds
+                setTimeout(() => {
+                    scanIndicator.className = 'scan-indicator';
+                    scanIndicator.innerHTML = '<span class="pulse"></span> Ready to Scan';
+                }, 2000);
+            }
+            
+            // Keep focus
+            this.focus();
+        }
+    });
+    
+    // Handle manual paste
+    qrInput.addEventListener('paste', function(e) {
+        setTimeout(() => {
+            const pastedData = this.value.trim();
+            if (pastedData) {
+                processScannedData(pastedData);
+                this.value = '';
+            }
+        }, 100);
     });
 }
+
+// Process the scanned data
+function processScannedData(data) {
+    const eventSelect = document.getElementById('eventSelect');
+    
+    // Check if event is selected
+    if (!eventSelect.value) {
+        showStatus('⚠️ Please select an event first!', 'error');
+        playErrorSound();
+        return;
+    }
+    
+    try {
+        let attendeeData;
+        
+        // Try to parse as JSON
+        try {
+            attendeeData = JSON.parse(data);
+            
+            // Validate required fields
+            if (!attendeeData.name) {
+                throw new Error('Name field missing');
+            }
+        } catch (e) {
+            // If not JSON, treat as plain text (name only)
+            attendeeData = {
+                name: data,
+                email: "N/A"
+            };
+        }
+        
+        // Display the scanned information
+        displayAttendeeInfo(attendeeData);
+        
+        // Record attendance
+        recordAttendance(attendeeData);
+        
+        // Play success sound
+        playSuccessSound();
+        
+    } catch (error) {
+        console.error('Error processing QR code:', error);
+        showStatus('❌ Error: Invalid QR code format', 'error');
+        playErrorSound();
+    }
+}
+
+// Clear input function
+function clearInput() {
+    const qrInput = document.getElementById('qrInput');
+    qrInput.value = '';
+    qrInput.focus();
+    showStatus('Input cleared', 'success');
+}
+
+// Manual submit function
+function manualSubmit() {
+    const qrInput = document.getElementById('qrInput');
+    const data = qrInput.value.trim();
+    
+    if (data) {
+        processScannedData(data);
+        qrInput.value = '';
+    } else {
+        showStatus('Please enter data first', 'error');
+    }
+    
+    qrInput.focus();
+}
+
+// Play success sound (optional)
+function playSuccessSound() {
+    // Create a simple beep sound
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+// Play error sound (optional)
+function playErrorSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 200;
+    oscillator.type = 'sawtooth';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+// Keep the existing functions from before:
+// - displayAttendeeInfo()
+// - recordAttendance()
+// - saveAttendanceLog()
+// - loadAttendanceLog()
+// - updateLogDisplay()
+// - sendToExcel()
+// - showStatus()
 
 // Stop the scanner
 function stopScanner() {
