@@ -25,24 +25,30 @@
         </div>
 
         <!-- QR Scanner Area -->
-        <div class="scanner-container">
-            <div id="qr-reader"></div>
-            <button id="startScanBtn" class="btn-primary">Start Scanner</button>
-            <button id="stopScanBtn" class="btn-secondary" style="display:none;">Stop Scanner</button>
-        </div>
+       <!-- Remove or hide the camera scanner section -->
+<!-- Add this new section instead -->
 
-        <!-- Display Scanned Result -->
-        <div id="result-container" style="display:none;">
-            <div class="success-message">
-                <h2>✅ Attendance Recorded!</h2>
-                <div class="attendee-info">
-                    <p><strong>Name:</strong> <span id="attendee-name"></span></p>
-                    <p><strong>Email:</strong> <span id="attendee-email"></span></p>
-                    <p><strong>Time:</strong> <span id="scan-time"></span></p>
-                </div>
-            </div>
+<div class="scanner-input-section">
+    <h2>🔍 Scan Attendee QR Code</h2>
+    <p class="instruction">Point your scanner at the QR code on the attendee's badge</p>
+    
+    <div class="input-container">
+        <input type="text" 
+               id="qrInput" 
+               placeholder="Ready to scan... (or type manually)" 
+               autofocus 
+               autocomplete="off">
+        <div class="scan-indicator" id="scanIndicator">
+            <span class="pulse"></span>
+            Ready to Scan
         </div>
-
+    </div>
+    
+    <div class="quick-actions">
+        <button onclick="clearInput()" class="btn-secondary">Clear</button>
+        <button onclick="manualSubmit()" class="btn-primary">Submit Manually</button>
+    </div>
+</div>
         <!-- Status Messages -->
         <div id="status-message"></div>
 
