@@ -84,6 +84,111 @@ header p {
     margin-right: auto;
 }
 
+/* Scanner Input Section */
+.scanner-input-section {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.scanner-input-section h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.instruction {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.input-container {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 20px;
+}
+
+#qrInput {
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+    border: 3px solid #667eea;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    background: white;
+    transition: all 0.3s;
+}
+
+#qrInput:focus {
+    outline: none;
+    border-color: #5568d3;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    transform: scale(1.02);
+}
+
+.scan-indicator {
+    margin-top: 15px;
+    padding: 10px;
+    background: #d4edda;
+    border-radius: 8px;
+    color: #155724;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pulse {
+    width: 12px;
+    height: 12px;
+    background: #28a745;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+}
+
+.scan-indicator.scanning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.scan-indicator.scanning .pulse {
+    background: #ffc107;
+}
+
+.scan-indicator.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.scan-indicator.success .pulse {
+    background: #28a745;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.quick-actions button {
+    padding: 12px 30px;
+}
 /* Buttons */
 .btn-primary, .btn-secondary {
     padding: 15px 40px;
