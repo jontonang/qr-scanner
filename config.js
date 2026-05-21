@@ -1,7 +1,7 @@
 // Configuration for Microsoft Graph API and Excel Integration
 const CONFIG = {
     // Your SharePoint sharing link
-    sharePointLink: "YOUR_SHAREPOINT_SHARING_LINK_HERE",
+    sharePointLink: "https://groupncs-my.sharepoint.com/:x:/r/personal/jia_lian_ang_ncs_co/Documents/Event_Attendance.xlsx?d=w0f4095044ea34a2fa2b3aa52763a6778&csf=1&web=1&e=vFWp4a",
     
     // Excel details
     excel: {
