@@ -1,7 +1,7 @@
 // Configuration for Microsoft Graph API and Excel Integration
 const CONFIG = {
-    // Your SharePoint sharing link
-    sharePointLink: "https://groupncs-my.sharepoint.com/:x:/r/personal/jia_lian_ang_ncs_co/Documents/Event_Attendance.xlsx?d=w0f4095044ea34a2fa2b3aa52763a6778&csf=1&web=1&e=vFWp4a",
+    // Your Google Drive sharing link
+    docs.google.com: "https://docs.google.com/spreadsheets/d/1-M2sKFQOfQ_gt2J7jlSsZNdGMidzBrXzgKRdMJH-JhI/edit?usp=drivesdk",
     
     // Excel details
     excel: {
