@@ -1,75 +1,57 @@
+// ===================================
 // QR Code Scanner Application
-let html5QrCode;
-let isScanning = false;
+// Annual Gathering 2026 - Attendance System
+// ===================================
+
+// Global Variables
 let attendanceLog = [];
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('QR Scanner initialized');
-    setupEventListeners();
-    loadAttendanceLog();
-});
-
-// Setup button click listeners
-function setupEventListeners() {
-    const startBtn = document.getElementById('startScanBtn');
-    const stopBtn = document.getElementById('stopScanBtn');
-    
-    startBtn.addEventListener('click', startScanner);
-    stopBtn.addEventListener('click', stopScanner);
-}
-
-// Start the QR code scanner
-function startScanner() {
-    const eventSelect = document.getElementById('eventSelect');
-    
-    // Check if event is selected
-    if (!eventSelect.value) {
-        showStatus('Please select an event first!', 'error');
-        return;
-    }
-
-    // Initialize scanner
-    html5QrCode = new Html5Qrcode("qr-reader");
-    
-    const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 }
-    };
-
-// QR Scanner Input Handler for USB/Bluetooth Scanner
-let scanTimeout;
 let lastScannedData = '';
 let lastScanTime = 0;
+let totalScans = 0;
+let todayScans = 0;
+let retryQueue = [];
 
-// Initialize when page loads
+// ===================================
+// Initialize Application
+// ===================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('QR Scanner Input System initialized');
+    console.log('QR Scanner initialized');
+    console.log('Event:', CONFIG.eventName);
+    console.log('Test Mode:', CONFIG.testMode);
+    
     setupScannerInput();
     loadAttendanceLog();
+    updateStatistics();
+    startAutoRetry();
+    
+    // Show test mode warning
+    if (CONFIG.testMode) {
+        showStatus('⚠️ Running in TEST MODE - Data will not sync to Google Sheets', 'warning');
+    }
 });
 
-// Setup scanner input handling
+// ===================================
+// Scanner Input Setup
+// ===================================
 function setupScannerInput() {
     const qrInput = document.getElementById('qrInput');
     const scanIndicator = document.getElementById('scanIndicator');
     
     // Keep input focused at all times
-    qrInput.focus();
-    
-    // Refocus if user clicks elsewhere
-    document.addEventListener('click', function() {
+    if (CONFIG.display.autoFocusInput) {
         qrInput.focus();
-    });
+        
+        // Refocus if user clicks elsewhere
+        document.addEventListener('click', function() {
+            qrInput.focus();
+        });
+    }
     
     // Handle input from scanner
     qrInput.addEventListener('input', function(e) {
         // Show scanning indicator
         scanIndicator.className = 'scan-indicator scanning';
         scanIndicator.innerHTML = '<span class="pulse"></span> Scanning...';
-        
-        // Clear previous timeout
-        clearTimeout(scanTimeout);
     });
     
     // Handle Enter key (scanner sends this after scan)
@@ -80,10 +62,11 @@ function setupScannerInput() {
             const scannedData = this.value.trim();
             const currentTime = Date.now();
             
-            // Prevent duplicate scans (within 2 seconds)
+            // Prevent duplicate scans
             if (scannedData === lastScannedData && 
-                (currentTime - lastScanTime) < 2000) {
+                (currentTime - lastScanTime) < CONFIG.duplicatePreventionWindow) {
                 console.log('Duplicate scan ignored');
+                showStatus('⚠️ Duplicate scan detected - please wait', 'warning');
                 this.value = '';
                 this.focus();
                 return;
@@ -128,16 +111,11 @@ function setupScannerInput() {
     });
 }
 
-// Process the scanned data
+// ===================================
+// Process Scanned Data
+// ===================================
 function processScannedData(data) {
-    const eventSelect = document.getElementById('eventSelect');
-    
-    // Check if event is selected
-    if (!eventSelect.value) {
-        showStatus('⚠️ Please select an event first!', 'error');
-        playErrorSound();
-        return;
-    }
+    console.log('Processing scanned data:', data);
     
     try {
         let attendeeData;
@@ -148,10 +126,11 @@ function processScannedData(data) {
             
             // Validate required fields
             if (!attendeeData.name) {
-                throw new Error('Name field missing');
+                throw new Error('Name field missing in QR code');
             }
         } catch (e) {
             // If not JSON, treat as plain text (name only)
+            console.log('QR code is not JSON, treating as plain text');
             attendeeData = {
                 name: data,
                 email: "N/A"
@@ -165,142 +144,23 @@ function processScannedData(data) {
         recordAttendance(attendeeData);
         
         // Play success sound
-        playSuccessSound();
-        
-    } catch (error) {
-        console.error('Error processing QR code:', error);
-        showStatus('❌ Error: Invalid QR code format', 'error');
-        playErrorSound();
-    }
-}
-
-// Clear input function
-function clearInput() {
-    const qrInput = document.getElementById('qrInput');
-    qrInput.value = '';
-    qrInput.focus();
-    showStatus('Input cleared', 'success');
-}
-
-// Manual submit function
-function manualSubmit() {
-    const qrInput = document.getElementById('qrInput');
-    const data = qrInput.value.trim();
-    
-    if (data) {
-        processScannedData(data);
-        qrInput.value = '';
-    } else {
-        showStatus('Please enter data first', 'error');
-    }
-    
-    qrInput.focus();
-}
-
-// Play success sound (optional)
-function playSuccessSound() {
-    // Create a simple beep sound
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
-}
-
-// Play error sound (optional)
-function playErrorSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 200;
-    oscillator.type = 'sawtooth';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
-}
-
-// Keep the existing functions from before:
-// - displayAttendeeInfo()
-// - recordAttendance()
-// - saveAttendanceLog()
-// - loadAttendanceLog()
-// - updateLogDisplay()
-// - sendToExcel()
-// - showStatus()
-
-// Stop the scanner
-function stopScanner() {
-    if (html5QrCode && isScanning) {
-        html5QrCode.stop().then(() => {
-            isScanning = false;
-            document.getElementById('startScanBtn').style.display = 'inline-block';
-            document.getElementById('stopScanBtn').style.display = 'none';
-            showStatus('Scanner stopped', 'success');
-        }).catch(err => {
-            console.error('Error stopping scanner:', err);
-        });
-    }
-}
-
-// Handle successful QR code scan
-function onScanSuccess(decodedText, decodedResult) {
-    console.log('QR Code detected:', decodedText);
-    
-    // Stop scanner temporarily to process
-    if (isScanning) {
-        stopScanner();
-    }
-
-    try {
-        // Parse QR code data (expecting JSON format)
-        let attendeeData;
-        
-        try {
-            attendeeData = JSON.parse(decodedText);
-        } catch (e) {
-            // If not JSON, treat as plain text
-            attendeeData = {
-                name: decodedText,
-                email: "N/A"
-            };
+        if (CONFIG.display.enableSound) {
+            playSuccessSound();
         }
-
-        // Display the scanned information
-        displayAttendeeInfo(attendeeData);
-        
-        // Record attendance
-        recordAttendance(attendeeData);
         
     } catch (error) {
         console.error('Error processing QR code:', error);
-        showStatus('Error: Invalid QR code format', 'error');
+        showStatus('❌ Error: Invalid QR code format - ' + error.message, 'error');
+        
+        if (CONFIG.display.enableSound) {
+            playErrorSound();
+        }
     }
 }
 
-// Handle scan errors (can be ignored - happens frequently during scanning)
-function onScanError(errorMessage) {
-    // Don't show errors - they happen constantly while scanning
-    // console.log('Scan error:', errorMessage);
-}
-
-// Display scanned attendee information
+// ===================================
+// Display Attendee Information
+// ===================================
 function displayAttendeeInfo(attendeeData) {
     const resultContainer = document.getElementById('result-container');
     const attendeeName = document.getElementById('attendee-name');
@@ -310,159 +170,100 @@ function displayAttendeeInfo(attendeeData) {
     // Update display
     attendeeName.textContent = attendeeData.name || 'Unknown';
     attendeeEmail.textContent = attendeeData.email || 'N/A';
-    scanTime.textContent = new Date().toLocaleString();
+    scanTime.textContent = formatDateTime(new Date());
     
     // Show result container
     resultContainer.style.display = 'block';
     
-    // Auto-hide after 5 seconds
+    // Auto-hide after configured duration
     setTimeout(() => {
         resultContainer.style.display = 'none';
-        // Restart scanner
-        startScanner();
-    }, 5000);
+    }, CONFIG.display.showResultDuration);
 }
 
-// Record attendance
+// ===================================
+// Record Attendance
+// ===================================
 function recordAttendance(attendeeData) {
-    const eventSelect = document.getElementById('eventSelect');
-    const eventName = eventSelect.value;
-    
+    // Create attendance record
     const attendanceRecord = {
-        event: eventName,
+        event: CONFIG.eventName,
         name: attendeeData.name,
         email: attendeeData.email,
         timestamp: new Date().toISOString(),
-        displayTime: new Date().toLocaleString()
+        displayTime: formatDateTime(new Date()),
+        status: 'Checked In'
     };
     
-    // Add to log
-    attendanceLog.unshift(attendanceRecord); // Add to beginning
+    // Add to log (at beginning)
+    attendanceLog.unshift(attendanceRecord);
+    
+    // Limit log size
+    if (attendanceLog.length > CONFIG.display.maxLogEntries) {
+        attendanceLog = attendanceLog.slice(0, CONFIG.display.maxLogEntries);
+    }
     
     // Save to localStorage
     saveAttendanceLog();
     
     // Update display
     updateLogDisplay();
+    updateStatistics();
     
-    // If not in test mode, send to Excel
+    // Send to Google Sheets
     if (!CONFIG.testMode) {
-        sendToExcel(attendanceRecord);
+        sendToGoogleSheets(attendanceRecord);
     } else {
-        console.log('Test Mode: Would send to Excel:', attendanceRecord);
-        showStatus('✅ Attendance recorded (Test Mode)', 'success');
+        console.log('Test Mode: Would send to Google Sheets:', attendanceRecord);
+        showStatus('✅ Attendance recorded (Test Mode - Not synced)', 'success');
     }
 }
 
-// Save attendance log to localStorage
-function saveAttendanceLog() {
-    localStorage.setItem('attendanceLog', JSON.stringify(attendanceLog));
-}
-
-// Load attendance log from localStorage
-function loadAttendanceLog() {
-    const saved = localStorage.getItem('attendanceLog');
-    if (saved) {
-        attendanceLog = JSON.parse(saved);
-        updateLogDisplay();
-    }
-}
-
-// Update the attendance log display
-function updateLogDisplay() {
-    const logContainer = document.getElementById('log-container');
-    
-    if (attendanceLog.length === 0) {
-        logContainer.innerHTML = '<p class="no-data">No scans yet</p>';
-        return;
-    }
-    
-    logContainer.innerHTML = '';
-    
-    // Show last 10 entries
-    attendanceLog.slice(0, 10).forEach(record => {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.innerHTML = `
-            <p><strong>\${record.name}</strong></p>
-            <p>Email: \${record.email}</p>
-            <p>Event: \${record.event}</p>
-            <p>Time: \${record.displayTime}</p>
-        `;
-        logContainer.appendChild(entry);
-    });
-}
-
-// Send data to Excel (via Microsoft Graph API)
-// Send data to Excel via SharePoint (using sharing link)
-async function sendToExcel(record) {
-    if (CONFIG.testMode) {
-        console.log('Test Mode: Would send to Excel:', record);
-        showStatus('✅ Attendance recorded (Test Mode)', 'success');
-        return;
-    }
-    
+// ===================================
+// Send Data to Google Sheets
+// ===================================
+async function sendToGoogleSheets(record) {
     try {
-        showStatus('💾 Saving to Excel...', 'success');
+        showStatus('💾 Saving to Google Sheets...', 'success');
         
-        // Prepare data for Excel row
-        const rowData = {
-            event: record.event,
-            name: record.name,
-            email: record.email,
-            timestamp: record.displayTime,
-            status: "Checked In"
+        // Prepare data for Google Sheets
+        const data = {
+            sheetTab: CONFIG.sheetTabs.attendance,
+            eventName: record.event,
+            attendeeName: record.name,
+            attendeeEmail: record.email,
+            timestamp: record.timestamp,
+            displayTime: record.displayTime,
+            status: record.status
         };
         
-        // Use a serverless function or Power Automate to write to Excel
-        // Since direct browser access to SharePoint requires authentication,
-        // we'll use a hybrid approach
+        // Send to Google Apps Script
+        const response = await fetch(CONFIG.googleSheetsURL, {
+            method: 'POST',
+            mode: 'no-cors', // Required for Google Apps Script
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
         
-        // Option 1: Save locally and provide export
-        saveToLocalStorage(rowData);
-        showStatus('✅ Saved locally! Export to Excel when done.', 'success');
-        
-        // Option 2: Use Power Automate (recommended)
-        // await sendToPowerAutomate(rowData);
+        // Note: no-cors mode doesn't allow reading response
+        // Assume success if no error thrown
+        console.log('Data sent to Google Sheets:', data);
+        showStatus('✅ Saved to Google Sheets successfully!', 'success');
+        updateLastSyncTime();
         
     } catch (error) {
-        console.error('Error sending to Excel:', error);
-        showStatus('⚠️ Saved locally, will retry sync later', 'error');
+        console.error('Error sending to Google Sheets:', error);
+        showStatus('⚠️ Saved locally - Will retry sync later', 'error');
+        
+        // Add to retry queue
         saveToRetryQueue(record);
     }
 }
-// Show status message
-function showStatus(message, type) {
-    const statusDiv = document.getElementById('status-message');
-    statusDiv.textContent = message;
-    statusDiv.className = type;
-    statusDiv.style.display = 'block';
-    
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-        statusDiv.style.display = 'none';
-    }, 3000);
-}
 
-// Export attendance log to CSV (bonus feature)
-function exportToCSV() {
-    if (attendanceLog.length === 0) {
-        alert('No data to export');
-        return;
-    }
-    
-    let csv = 'Event,Name,Email,Timestamp
-';
-    attendanceLog.forEach(record => {
-        csv += `"\${record.event}","\${record.name}","\${record.email}","\${record.displayTime}"
-`;
-    });
-    
-    // Create download link
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `attendance_\${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-}
+// ===================================
+// Retry Queue Management
+// ===================================
+function saveToRetryQueue(record) {
+    retryQueue = JSON.parse(localStorage.getItem('retryQueue
