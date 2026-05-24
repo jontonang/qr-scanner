@@ -1,182 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Annual Gathering 2026</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-font-family: Arial, sans-serif;
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-min-height: 100vh;
-padding: 20px;
-}
-.container {
-max-width: 800px;
-margin: 0 auto;
-background: white;
-border-radius: 20px;
-padding: 30px;
-box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-h1 { color: #333; text-align: center; margin-bottom: 10px; }
-h2 { color: white; text-align: center; margin-bottom: 20px; }
-.event-box {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-color: white;
-padding: 30px;
-border-radius: 12px;
-margin-bottom: 30px;
-text-align: center;
-}
-.scanner-box {
-background: #f8f9fa;
-padding: 30px;
-border-radius: 12px;
-margin-bottom: 30px;
-text-align: center;
-}
-input {
-width: 100%;
-padding: 20px;
-font-size: 20px;
-border: 3px solid #667eea;
-border-radius: 10px;
-text-align: center;
-font-weight: bold;
-margin: 15px 0;
-}
-input:focus {
-outline: none;
-border-color: #5568d3;
-box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-.status {
-padding: 12px;
-background: #d4edda;
-color: #155724;
-border-radius: 8px;
-font-weight: bold;
-margin: 15px 0;
-}
-.result {
-background: #d4edda;
-border: 2px solid #28a745;
-padding: 25px;
-border-radius: 12px;
-margin: 20px 0;
-display: none;
-}
-.result h3 { color: #155724; margin-bottom: 15px; }
-.result p { margin: 8px 0; font-size: 16px; }
-.stats {
-display: grid;
-grid-template-columns: 1fr;
-gap: 20px;
-margin: 30px 0;
-}
-.stat-card {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-color: white;
-padding: 25px;
-border-radius: 12px;
-text-align: center;
-}
-.stat-number { font-size: 3em; font-weight: bold; }
-.stat-label { font-size: 1em; opacity: 0.9; margin-top: 10px; }
-button {
-padding: 12px 30px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-font-weight: bold;
-font-size: 16px;
-margin: 5px;
-}
-.btn-export { background: #28a745; color: white; }
-.btn-export:hover { background: #218838; }
-.btn-clear { background: #dc3545; color: white; }
-.btn-clear:hover { background: #c82333; }
-.log {
-background: #f8f9fa;
-padding: 20px;
-border-radius: 10px;
-max-height: 400px;
-overflow-y: auto;
-margin-top: 20px;
-}
-.log-entry {
-background: white;
-padding: 15px;
-margin: 10px 0;
-border-radius: 8px;
-border-left: 4px solid #667eea;
-}
-.log-entry p { margin: 5px 0; color: #555; }
-.log-entry strong { color: #333; }
+body{font-family:Arial;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px;margin:0}
+.box{max-width:700px;margin:0 auto;background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+h1{color:#333;text-align:center;margin:0 0 10px}
+.event{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
+.event h2{margin:0 0 10px;font-size:2em}
+input{width:100%;padding:18px;font-size:18px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold;margin:15px 0;box-sizing:border-box}
+input:focus{outline:none;border-color:#5568d3;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
+.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;font-weight:bold;text-align:center;margin:15px 0}
+.result{background:#d4edda;border:2px solid #28a745;padding:20px;border-radius:10px;margin:20px 0;display:none}
+.result h3{color:#155724;margin:0 0 15px}
+.result p{margin:8px 0;font-size:16px}
+.count{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center;margin:20px 0}
+.count .num{font-size:3em;font-weight:bold;margin:0}
+.count .label{font-size:1em;opacity:0.9;margin:10px 0 0}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="box">
 <h1>📱 QR Attendance Scanner</h1>
 
-<div class="event-box">
+<div class="event">
 <h2>📅 Annual Gathering 2026</h2>
-<p>Scan QR Code to Record Attendance</p>
+<p>Scan QR Code Type Name</p>
 </div>
 
-<div class="scanner-box">
-<h3>🔍 Scan QR Code</h3>
-<p>Point scanner at QR code or type manually</p>
-<input type="text" id="qrInput" placeholder="Ready to scan..." autofocus>
-<div class="status" id="status">Ready to scan</div>
-</div>
+<input type="text" id="input" placeholder="Scan QR code type name..." autofocus>
+<div class="status" id="status">Ready scan</div>
 
 <div class="result" id="result">
-<h3>✅ Attendance Recorded!</h3>
-<p><strong>Name:</strong> <span id="resultName"></span></p>
-<p><strong>Email:</strong> <span id="resultEmail"></span></p>
-<p><strong>Time:</strong> <span id="resultTime"></span></p>
+<h3>✅ Saved Google Sheets!</h3>
+<p><strong>Name:</strong> <span id="rName"></span></p>
+<p><strong>Email:</strong> <span id="rEmail"></span></p>
+<p><strong>Time:</strong> <span id="rTime"></span></p>
 </div>
 
-<div class="stats">
-<div class="stat-card">
-<div class="stat-number" id="totalCount">0</div>
-<div class="stat-label">Total Attendees</div>
+<div class="count">
+<div class="num" id="count">0</div>
+<div class="label">Total Scanned</div>
 </div>
-</div>
-
-<div style="text-align: center; margin: 20px 0;">
-<button class="btn-export" onclick="exportCSV()">📥 Export to CSV</button>
-<button class="btn-clear" onclick="clearAll()">🗑️ Clear All</button>
-</div>
-
-<h3>Recent Scans:</h3>
-<div class="log" id="log">No scans yet</div>
 </div>
 
 <script>
-let attendance = [];
+// PASTE GOOGLE APPS SCRIPT URL HERE
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1U2v356uVDrm4nYrWypTUSyg8BotxrTt7SVCGrb4f30U6twqvijGQse_ljy84sfjLMQ/exec';
 
-// Load saved data
-const saved = localStorage.getItem('attendance');
-if (saved) {
-attendance = JSON.parse(saved);
-updateDisplay();
-}
+let count = parseInt(localStorage.getItem('count')) || 0;
+document.getElementById('count').textContent = count;
 
-// Setup input
-const input = document.getElementById('qrInput');
+const input = document.getElementById('input');
 const status = document.getElementById('status');
 
 input.focus();
+document.addEventListener('click', () => input.focus());
 
-document.addEventListener('click', function() {
-input.focus();
-});
-
-input.addEventListener('input', function() {
+input.addEventListener('input', () => {
 status.textContent = 'Scanning...';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
@@ -187,144 +69,83 @@ if (e.key === 'Enter') {
 e.preventDefault();
 const data = this.value.trim();
 if (data) {
-processQR(data);
+process(data);
 this.value = '';
 }
 this.focus();
 }
 });
 
-function processQR(data) {
+function process(data) {
 console.log('Processing:', data);
 
-let attendee = { name: '', email: '' };
+let name = '';
+let email = '';
 
-// Try parse JSON
 try {
-const parsed = JSON.parse(data);
-if (parsed.name) {
-attendee.name = parsed.name;
-attendee.email = parsed.email || 'N/A';
-} else {
-throw new Error('Invalid format');
-}
+const json = JSON.parse(data);
+name = json.name || '';
+email = json.email || '';
 } catch(e) {
-// Not JSON - check for comma-separated
 if (data.includes(',')) {
-const parts = data.split(',').map(p => p.trim());
-attendee.name = parts[0] || 'Unknown';
-attendee.email = parts[1] || 'N/A';
+const parts = data.split(',');
+name = parts[0].trim();
+email = parts[1].trim();
 } else {
-// Just name
-attendee.name = data;
-attendee.email = 'N/A';
+name = data;
+email = 'N/A';
 }
 }
 
-recordAttendance(attendee);
+save(name, email);
 }
 
-function recordAttendance(attendee) {
-const record = {
-event: 'Annual Gathering 2026',
-name: attendee.name,
-email: attendee.email,
-time: new Date().toLocaleString('en-SG'),
-timestamp: new Date().toISOString()
-};
+async function save(name, email) {
+const time = new Date().toLocaleString('en-SG');
 
-attendance.unshift(record);
+status.textContent = '💾 Saving Google Sheets...';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
 
-// Save
-localStorage.setItem('attendance', JSON.stringify(attendance));
+try {
+await fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({name: name, email: email, time: time})
+});
 
-// Show result
-document.getElementById('resultName').textContent = record.name;
-document.getElementById('resultEmail').textContent = record.email;
-document.getElementById('resultTime').textContent = record.time;
+document.getElementById('rName').textContent = name;
+document.getElementById('rEmail').textContent = email;
+document.getElementById('rTime').textContent = time;
 document.getElementById('result').style.display = 'block';
 
 setTimeout(() => {
 document.getElementById('result').style.display = 'none';
 }, 5000);
 
-// Update display
-updateDisplay();
+count++;
+localStorage.setItem('count', count);
+document.getElementById('count').textContent = count;
 
-// Update status
-status.textContent = '✅ Recorded successfully!';
+status.textContent = '✅ Saved successfully!';
 status.style.background = '#d4edda';
 status.style.color = '#155724';
 
 setTimeout(() => {
-status.textContent = 'Ready to scan';
-status.style.background = '#d4edda';
-status.style.color = '#155724';
+status.textContent = 'Ready scan';
 }, 2000);
 
-console.log('Recorded:', record);
-}
-
-function updateDisplay() {
-document.getElementById('totalCount').textContent = attendance.length;
-
-const logDiv = document.getElementById('log');
-
-if (attendance.length === 0) {
-logDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No scans yet</p>';
-return;
-}
-
-let html = '';
-attendance.slice(0, 20).forEach(record => {
-html += `
-<div class="log-entry">
-<p><strong>\${record.name}</strong></p>
-<p>Email: \${record.email}</p>
-<p>Time: \${record.time}</p>
-</div>
-`;
-});
-
-logDiv.innerHTML = html;
-}
-
-function exportCSV() {
-if (attendance.length === 0) {
-alert('No data to export');
-return;
-}
-
-let csv = 'Event,Name,Email,Timestamp
-';
-attendance.forEach(record => {
-csv += `"\${record.event}","\${record.name}","\${record.email}","\${record.time}"
-`;
-});
-
-const blob = new Blob([csv], { type: 'text/csv' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'Annual_Gathering_2026_Attendance.csv';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-
-alert('Exported ' + attendance.length + ' records to CSV');
-}
-
-function clearAll() {
-if (confirm('Clear all attendance records? This cannot be undone.')) {
-attendance = [];
-localStorage.removeItem('attendance');
-updateDisplay();
-alert('All data cleared');
+console.log('Saved:', name, email);
+} catch (error) {
+console.error('Error:', error);
+status.textContent = '⚠️ Error - try again';
+status.style.background = '#f8d7da';
+status.style.color = '#721c24';
 }
 }
 
-console.log('Scanner ready!');
+console.log('Scanner ready');
 </script>
 </body>
 </html>
