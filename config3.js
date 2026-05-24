@@ -1,7 +1,12 @@
 const CONFIG = {
     eventName: "Annual Gathering 2026",
-    googleSheetsURL: "https://docs.google.com/spreadsheets/d/1-M2sKFQOfQ_gt2J7jlSsZNdGMidzBrXzgKRdMJH-JhI/edit?usp=drivesdk",
-    testMode: true,
+    
+    // Google Apps Script Web App URL (NOT Google Sheets URL)
+    googleSheetsURL: "https://script.google.com/a/macros/ncs.com.sg/s/AKfycbwNmqMpXVSJVBpwBvQDPcJqEGPqMQJWjxJdZZPNPWJCOlZLLAOJcDPMHPPBqCqLBEWO/exec",
+    
+    // Set false production use
+    testMode: false,
+    
     sheetTabs: {
         attendance: "Annual Gathering 2026",
         nameList: "Name List"
