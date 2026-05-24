@@ -1,537 +1,293 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=\"en\">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Annual Gathering 2026 - QR Scanner</title>
+<meta charset=\"UTF-8\">
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+<title>Annual Gathering 2026</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-h1 {
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2em;
-}
-
-.event-box {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 25px;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.event-box h2 {
-  font-size: 2em;
-  margin-bottom: 10px;
-}
-
-.event-box p {
-  font-size: 1.1em;
-  opacity: 0.9;
-}
-
-.input-section {
-  margin: 20px 0;
-}
-
-#scanInput {
-  width: 100%;
-  padding: 20px;
-  font-size: 20px;
-  border: 3px solid #667eea;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
-  box-sizing: border-box;
-}
-
-#scanInput:focus {
-  outline: none;
-  border-color: #5568d3;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
-.status {
-  padding: 15px;
-  background: #d4edda;
-  color: #155724;
-  border-radius: 8px;
-  font-weight: bold;
-  text-align: center;
-  margin: 15px 0;
-  font-size: 16px;
-}
-
-.result {
-  background: #d4edda;
-  border: 2px solid #28a745;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px 0;
-  display: none;
-  animation: slideIn 0.5s;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.result h3 {
-  color: #155724;
-  margin-bottom: 15px;
-}
-
-.result p {
-  margin: 10px 0;
-  font-size: 16px;
-}
-
-.result strong {
-  color: #667eea;
-}
-
-.stats {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 25px;
-  border-radius: 12px;
-  text-align: center;
-  margin: 20px 0;
-}
-
-.stat-number {
-  font-size: 4em;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.stat-label {
-  font-size: 1.2em;
-  opacity: 0.9;
-}
-
-.buttons {
-  margin: 20px 0;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 18px;
-  margin: 8px 0;
-  transition: all 0.3s;
-}
-
-.btn-export {
-  background: #28a745;
-  color: white;
-}
-
-.btn-export:hover {
-  background: #218838;
-  transform: translateY(-2px);
-}
-
-.btn-clear {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-clear:hover {
-  background: #c82333;
-  transform: translateY(-2px);
-}
-
-.log-section {
-  margin-top: 30px;
-}
-
-.log-section h3 {
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.log {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 10px;
-  max-height: 350px;
-  overflow-y: auto;
-}
-
-.log-entry {
-  background: white;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border-left: 4px solid #667eea;
-  transition: 0.3s;
-}
-
-.log-entry:hover {
-  transform: translateX(5px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.log-entry p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 14px;
-}
-
-.log-entry strong {
-  color: #333;
-}
-
-.no-data {
-  text-align: center;
-  color: #999;
-  padding: 30px;
-  font-style: italic;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+.container{max-width:700px;margin:0 auto;background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+h1{color:#333;text-align:center;margin-bottom:20px;font-size:2em}
+.event-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin-bottom:25px}
+.event-box h2{font-size:2em;margin-bottom:10px}
+.event-box p{font-size:1.1em;opacity:0.9}
+.input-section{margin:20px 0}
+#scanInput{width:100%;padding:20px;font-size:20px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold;box-sizing:border-box}
+#scanInput:focus{outline:none;border-color:#5568d3;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
+.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;font-weight:bold;text-align:center;margin:15px 0;font-size:16px}
+.result{background:#d4edda;border:2px solid #28a745;padding:20px;border-radius:10px;margin:20px 0;display:none}
+.result h3{color:#155724;margin-bottom:15px}
+.result p{margin:10px 0;font-size:16px}
+.result strong{color:#667eea}
+.stats{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
+.stat-number{font-size:4em;font-weight:bold;margin-bottom:10px}
+.stat-label{font-size:1.2em;opacity:0.9}
+button{width:100%;padding:15px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:18px;margin:8px 0;transition:0.3s}
+.btn-export{background:#28a745;color:#fff}
+.btn-export:hover{background:#218838;transform:translateY(-2px)}
+.btn-clear{background:#dc3545;color:#fff}
+.btn-clear:hover{background:#c82333;transform:translateY(-2px)}
+.log-section{margin-top:30px}
+.log-section h3{color:#333;margin-bottom:15px}
+.log{background:#f8f9fa;padding:15px;border-radius:10px;max-height:350px;overflow-y:auto}
+.log-entry{background:#fff;padding:15px;margin:10px 0;border-radius:8px;border-left:4px solid #667eea}
+.log-entry p{margin:5px 0;color:#555;font-size:14px}
+.log-entry strong{color:#333}
+.no-data{text-align:center;color:#999;padding:30px;font-style:italic}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>📱 QR Attendance Scanner</h1>
+<div class=\"container\">
+<h1>📱 QR Attendance Scanner</h1>
 
-  <div class="event-box">
-    <h2>📅 Annual Gathering 2026</h2>
-    <p>Auto-Scan Mode</p>
-  </div>
+<div class=\"event-box\">
+<h2>📅 Annual Gathering 2026</h2>
+<p>Auto-Scan Mode</p>
+</div>
 
-  <div class="input-section">
-    <input type="text" id="scanInput" placeholder="Ready to scan..." autofocus autocomplete="off">
-    <div class="status" id="status">Ready to scan</div>
-  </div>
+<div class=\"input-section\">
+<input type=\"text\" id=\"scanInput\" placeholder=\"Ready scan...\" autofocus autocomplete=\"off\">
+<div class=\"status\" id=\"status\">Ready scan</div>
+</div>
 
-  <div class="result" id="result">
-    <h3>✅ Saved to Google Sheets!</h3>
-    <p><strong>Name:</strong> <span id="resultName"></span></p>
-    <p><strong>Email:</strong> <span id="resultEmail"></span></p>
-    <p><strong>Time:</strong> <span id="resultTime"></span></p>
-  </div>
+<div class=\"result\" id=\"result\">
+<h3>✅ Saved Google Sheets!</h3>
+<p><strong>Name:</strong> <span id=\"resultName\"></span></p>
+<p><strong>Email:</strong> <span id=\"resultEmail\"></span></p>
+<p><strong>Time:</strong> <span id=\"resultTime\"></span></p>
+</div>
 
-  <div class="stats">
-    <div class="stat-number" id="totalCount">0</div>
-    <div class="stat-label">Total Scanned</div>
-  </div>
+<div class=\"stats\">
+<div class=\"stat-number\" id=\"totalCount\">0</div>
+<div class=\"stat-label\">Total Scanned</div>
+</div>
 
-  <div class="buttons">
-    <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
-    <button class="btn-clear" onclick="clearAll()">🗑️ Clear All</button>
-  </div>
+<div class=\"buttons\">
+<button class=\"btn-export\" onclick=\"exportCSV()\">📥 Export CSV</button>
+<button class=\"btn-clear\" onclick=\"clearAll()\">🗑️ Clear All</button>
+</div>
 
-  <div class="log-section">
-    <h3>📋 Recent Scans:</h3>
-    <div class="log" id="logContainer">
-      <p class="no-data">No scans yet</p>
-    </div>
-  </div>
+<div class=\"log-section\">
+<h3>📋 Recent Scans:</h3>
+<div class=\"log\" id=\"logContainer\">
+<p class=\"no-data\">No scans yet</p>
+</div>
+</div>
 </div>
 
 <script>
-// Google Apps Script URL - ALREADY CONFIGURED
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec';
-
-// Global variables
-var attendanceData = [];
+var SCRIPT_URL = '[https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec] attendanceData = [];
 var totalCount = 0;
 var scanTimeout;
 var lastScan = '';
 var lastScanTime = 0;
 
-// Load saved data
 var savedData = localStorage.getItem('attendance');
-if (savedData) {
-  try {
-    attendanceData = JSON.parse(savedData);
-    totalCount = attendanceData.length;
-    updateDisplay();
-  } catch(e) {
-    console.error('Error loading data:', e);
-  }
+if(savedData){
+try{
+attendanceData = JSON.parse(savedData);
+totalCount = attendanceData.length;
+updateDisplay();
+}catch(e){
+console.error('Load error:', e);
+}
 }
 
 var input = document.getElementById('scanInput');
 var status = document.getElementById('status');
 
-// Auto-focus input
 input.focus();
-document.addEventListener('click', function() {
-  setTimeout(function() {
-    input.focus();
-  }, 100);
+document.addEventListener('click', function(){
+setTimeout(function(){
+input.focus();
+}, 100);
 });
 
-// Auto-submit when typing stops
-input.addEventListener('input', function() {
-  clearTimeout(scanTimeout);
-  
-  status.textContent = 'Scanning...';
-  status.style.background = '#fff3cd';
-  status.style.color = '#856404';
-  
-  scanTimeout = setTimeout(function() {
-    var text = input.value.trim();
-    if (text) {
-      autoSubmit(text);
-    }
-  }, 100);
+input.addEventListener('input', function(){
+clearTimeout(scanTimeout);
+status.textContent = 'Scanning...';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
+scanTimeout = setTimeout(function(){
+var text = input.value.trim();
+if(text){
+autoSubmit(text);
+}
+}, 100);
 });
 
-// Also support Enter key
-input.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    clearTimeout(scanTimeout);
-    var text = input.value.trim();
-    if (text) {
-      autoSubmit(text);
-    }
-  }
+input.addEventListener('keypress', function(e){
+if(e.key === 'Enter'){
+e.preventDefault();
+clearTimeout(scanTimeout);
+var text = input.value.trim();
+if(text){
+autoSubmit(text);
+}
+}
 });
 
-// Auto-submit function
-function autoSubmit(text) {
-  var currentTime = Date.now();
-  
-  // Prevent duplicates within 2 seconds
-  if (text === lastScan && (currentTime - lastScanTime) < 2000) {
-    console.log('Duplicate scan ignored');
-    input.value = '';
-    status.textContent = 'Ready to scan';
-    status.style.background = '#d4edda';
-    status.style.color = '#155724';
-    return;
-  }
-  
-  lastScan = text;
-  lastScanTime = currentTime;
-  
-  status.textContent = '⚡ Processing...';
-  status.style.background = '#fff3cd';
-  status.style.color = '#856404';
-  
-  processData(text);
-  input.value = '';
-  input.focus();
+function autoSubmit(text){
+var currentTime = Date.now();
+if(text === lastScan && (currentTime - lastScanTime) < 2000){
+console.log('Duplicate ignored');
+input.value = '';
+status.textContent = 'Ready scan';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+return;
+}
+lastScan = text;
+lastScanTime = currentTime;
+status.textContent = 'Processing...';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
+processData(text);
+input.value = '';
+input.focus();
 }
 
-// Process scanned data
-function processData(text) {
-  console.log('Processing:', text);
-  
-  var name = '';
-  var email = '';
-  
-  // Try to parse JSON
-  try {
-    var json = JSON.parse(text);
-    name = json.name || '';
-    email = json.email || '';
-  } catch(e) {
-    // Not JSON - check if comma-separated
-    if (text.indexOf(',') > -1) {
-      var parts = text.split(',');
-      name = parts[0].trim();
-      email = parts[1] ? parts[1].trim() : 'N/A';
-    } else {
-      // Just name
-      name = text;
-      email = 'N/A';
-    }
-  }
-  
-  if (!name) {
-    status.textContent = 'Ready to scan';
-    status.style.background = '#d4edda';
-    status.style.color = '#155724';
-    return;
-  }
-  
-  saveRecord(name, email);
+function processData(text){
+console.log('Processing:', text);
+var name = '';
+var email = '';
+try{
+var json = JSON.parse(text);
+name = json.name || '';
+email = json.email || '';
+}catch(e){
+if(text.indexOf(',') > -1){
+var parts = text.split(',');
+name = parts[0].trim();
+email = parts[1] ? parts[1].trim() : 'N/A';
+}else{
+name = text;
+email = 'N/A';
+}
+}
+if(!name){
+status.textContent = 'Ready scan';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+return;
+}
+saveRecord(name, email);
 }
 
-// Save record
-function saveRecord(name, email) {
-  var now = new Date();
-  var record = {
-    event: 'Annual Gathering 2026',
-    name: name,
-    email: email,
-    time: now.toLocaleString('en-SG'),
-    timestamp: now.toISOString()
-  };
-  
-  // Save locally first
-  attendanceData.unshift(record);
-  localStorage.setItem('attendance', JSON.stringify(attendanceData));
-  totalCount = attendanceData.length;
-  
-  // Show result
-  document.getElementById('resultName').textContent = name;
-  document.getElementById('resultEmail').textContent = email;
-  document.getElementById('resultTime').textContent = record.time;
-  document.getElementById('result').style.display = 'block';
-  
-  setTimeout(function() {
-    document.getElementById('result').style.display = 'none';
-  }, 4000);
-  
-  updateDisplay();
-  
-  // Sync to Google Sheets
-  syncToGoogleSheets(record);
-  
-  console.log('Saved:', record);
+function saveRecord(name, email){
+var = new Date();
+var record = {
+event: 'Annual Gathering 2026',
+name: name,
+email: email,
+time: now.toLocaleString('en-SG'),
+timestamp: now.toISOString()
+};
+attendanceData.unshift(record);
+localStorage.setItem('attendance', JSON.stringify(attendanceData));
+totalCount = attendanceData.length;
+document.getElementById('resultName').textContent = name;
+document.getElementById('resultEmail').textContent = email;
+document.getElementById('resultTime').textContent = record.time;
+document.getElementById('result').style.display = 'block';
+setTimeout(function(){
+document.getElementById('result').style.display = 'none';
+}, 4000);
+updateDisplay();
+syncToGoogleSheets(record);
+console.log('Saved:', record);
 }
 
-// Sync to Google Sheets
-function syncToGoogleSheets(record) {
-  status.textContent = '☁️ Syncing to Google Sheets...';
-  status.style.background = '#e7f3ff';
-  status.style.color = '#1565C0';
-  
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(record)
-  })
-  .then(function() {
-    status.textContent = '✅ Synced to Google Sheets!';
-    status.style.background = '#d4edda';
-    status.style.color = '#155724';
-    
-    setTimeout(function() {
-      status.textContent = 'Ready to scan';
-    }, 2000);
-    
-    console.log('Synced to Google Sheets');
-  })
-  .catch(function(error) {
-    console.error('Sync error:', error);
-    status.textContent = '⚠️ Saved locally (sync failed)';
-    status.style.background = '#fff3cd';
-    status.style.color = '#856404';
-    
-    setTimeout(function() {
-      status.textContent = 'Ready to scan';
-      status.style.background = '#d4edda';
-      status.style.color = '#155724';
-    }, 3000);
-  });
+function syncToGoogleSheets(record){
+status.textContent = 'Syncing...';
+status.style.background = '#e7f3ff';
+status.style.color = '#1565C0';
+fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify(record)
+})
+.then(function(){
+status.textContent = 'Synced!';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+setTimeout(function(){
+status.textContent = 'Ready scan';
+}, 2000);
+console.log('Synced');
+})
+.catch(function(error){
+console.error('Sync error:', error);
+status.textContent = 'Saved locally';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
+setTimeout(function(){
+status.textContent = 'Ready scan';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+}, 3000);
+});
 }
 
-// Update display
-function updateDisplay() {
-  document.getElementById('totalCount').textContent = totalCount;
-  
-  var logContainer = document.getElementById('logContainer');
-  
-  if (attendanceData.length === 0) {
-    logContainer.innerHTML = '<p class="no-data">No scans yet</p>';
-    return;
-  }
-  
-  var html = '';
-  for (var i = 0; i < Math.min(attendanceData.length, 15); i++) {
-    var record = attendanceData[i];
-    html += '<div class="log-entry">';
-    html += '<p><strong>' + record.name + '</strong></p>';
-    html += '<p>Email: ' + record.email + '</p>';
-    html += '<p>Time: ' + record.time + '</p>';
-    html += '</div>';
-  }
-  
-  logContainer.innerHTML = html;
+function updateDisplay(){
+document.getElementById('totalCount').textContent = totalCount;
+var logContainer = document.getElementById('logContainer');
+if(attendanceData.length === 0){
+logContainer.innerHTML = '<p class=\"no-data\">No scans yet</p>';
+return;
+}
+var html = '';
+for(var = 0; < Math.min(attendanceData.length, 15); i++){
+var r = attendanceData[i];
+html += '<div class=\"log-entry\">';
+html += '<p><strong>' + r.name + '</strong></p>';
+html += '<p>Email: ' + r.email + '</p>';
+html += '<p>Time: ' + r.time + '</p>';
+html += '</div>';
+}
+logContainer.innerHTML = html;
 }
 
-// Export CSV
-function exportCSV() {
-  if (attendanceData.length === 0) {
-    alert('No data to export');
-    return;
-  }
-  
-  var csv = 'Event,Name,Email,Timestamp
+function exportCSV(){
+if(attendanceData.length === 0){
+alert('No data export');
+return;
+}
+var csv = 'Event,Name,Email,Timestamp
 ';
-  for (var i = 0; i < attendanceData.length; i++) {
-    var r = attendanceData[i];
-    csv += '"' + r.event + '","' + r.name + '","' + r.email + '","' + r.time + '"
+for(var = 0; < attendanceData.length; i++){
+var r = attendanceData[i];
+csv += '\"' + r.event + '\",\"' + r.name + '\",\"' + r.email + '\",\"' + r.time + '\"
 ';
-  }
-  
-  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  var url = URL.createObjectURL(blob);
-  var link = document.createElement('a');
-  link.href = url;
-  link.download = 'Annual_Gathering_2026_Attendance.csv';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-  
-  alert('✅ Exported ' + attendanceData.length + ' records to CSV');
+}
+var blob = new Blob([csv], {type: 'text/csv'});
+var url = URL.createObjectURL(blob);
+var link = document.createElement('a');
+link.href = url;
+link.download = 'Annual_Gathering_2026_Attendance.csv';
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+URL.revokeObjectURL(url);
+alert('Exported ' + attendanceData.length + ' records');
 }
 
-// Clear all data
-function clearAll() {
-  if (confirm('Clear all local data?
+function clearAll(){
+if(confirm('Clear local data?
 
-Google Sheets data will remain safe.
-
-This will only clear data in your browser.')) {
-    attendanceData = [];
-    totalCount = 0;
-    localStorage.removeItem('attendance');
-    updateDisplay();
-    alert('✅ Local data cleared');
-  }
+Google Sheets data safe.')){
+attendanceData = [];
+totalCount = 0;
+localStorage.removeItem('attendance');
+updateDisplay();
+alert('Cleared');
+}
 }
 
-console.log('=================================');
-console.log('QR Scanner Ready!');
-console.log('Script URL configured');
-console.log('Total records:', totalCount);
-console.log('=================================');
+console.log('Scanner ready!');
+console.log('Records:', totalCount);
 </script>
 </body>
 </html>
