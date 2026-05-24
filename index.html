@@ -3,7 +3,7 @@
 <head>
 <meta charset=\"UTF-8\">
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-<title>Annual Gathering 2026</title>
+<title>Annual Gathering 2026 - Auto Scanner</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
@@ -12,18 +12,22 @@ h1{color:#333;text-align:center;margin-bottom:10px;font-size:2em}
 .event-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
 .event-box h2{font-size:2em;margin-bottom:10px}
 .event-box p{font-size:1.1em;opacity:0.9}
+.mode-badge{background:rgba(255,255,255,0.2);padding:8px 15px;border-radius:20px;display:inline-block;margin-top:10px;font-size:0.9em}
 .input-section{margin:20px 0}
-#nameInput{width:100%;padding:20px;font-size:20px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold;font-family:monospace}
-#nameInput:focus{outline:none;border-color:#5568d3;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
-.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;font-weight:bold;text-align:center;margin:15px 0;font-size:16px}
+#scanInput{width:100%;padding:20px;font-size:20px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold;font-family:monospace}
+#scanInput:focus{outline:none;border-color:#5568d3;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
+.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;font-weight:bold;text-align:center;margin:15px 0;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px}
+.pulse{display:inline-block;width:12px;height:12px;background:#28a745;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
 .result{background:#d4edda;border:2px solid #28a745;padding:20px;border-radius:10px;margin:20px 0;display:none;animation:slideIn 0.5s}
 @keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 .result h3{color:#155724;margin-bottom:15px;font-size:1.5em}
 .result p{margin:10px 0;font-size:16px}
-.result strong{color:#667eea}
-.stats{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
-.stat-number{font-size:4em;font-weight:bold;margin-bottom:10px}
-.stat-label{font-size:1.2em;opacity:0.9}
+.result strong{color:#667eea;min-width:100px;display:inline-block}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:20px 0}
+.stat-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:12px;text-align:center}
+.stat-number{font-size:3em;font-weight:bold;margin-bottom:5px}
+.stat-label{font-size:1em;opacity:0.9}
 .buttons{text-align:center;margin:20px 0}
 button{padding:12px 25px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:16px;margin:5px;transition:0.3s}
 .btn-export{background:#28a745;color:#fff}
@@ -38,8 +42,7 @@ button{padding:12px 25px;border:none;border-radius:8px;cursor:pointer;font-weigh
 .log-entry p{margin:5px 0;color:#555;font-size:14px}
 .log-entry strong{color:#333}
 .no-data{text-align:center;color:#999;padding:30px;font-style:italic}
-.pulse{display:inline-block;width:12px;height:12px;background:#28a745;border-radius:50%;margin-right:8px;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+.sync-status{background:#e7f3ff;border-left:4px solid #2196F3;padding:12px;margin:15px 0;border-radius:5px;font-size:14px;color:#1565C0}
 </style>
 </head>
 <body>
@@ -48,33 +51,47 @@ button{padding:12px 25px;border:none;border-radius:8px;cursor:pointer;font-weigh
 
 <div class=\"event-box\">
 <h2>📅 Annual Gathering 2026</h2>
-<p>Auto-Scan Mode - Scan Submit</p>
+<p>Auto-Scan Mode - Real-Time Sync</p>
+<div class=\"mode-badge\">⚡ AUTO-SUBMIT ENABLED</div>
+</div>
+
+<div class=\"sync-status\" id=\"syncStatus\">
+🔄 Syncing Google Sheets...
 </div>
 
 <div class=\"input-section\">
-<input type=\"text\" id=\"nameInput\" placeholder=\"Ready scan...\" autofocus>
-<div class=\"status\" id=\"status\"><span class=\"pulse\"></span>Ready scan</div>
+<input type=\"text\" id=\"scanInput\" placeholder=\"Ready scan...\" autofocus autocomplete=\"off\">
+<div class=\"status\" id=\"status\">
+<span class=\"pulse\"></span>
+<span>Ready scan</span>
+</div>
 </div>
 
 <div class=\"result\" id=\"result\">
-<h3>✅ Attendance Recorded!</h3>
+<h3>✅ Saved Google Sheets!</h3>
 <p><strong>Name:</strong> <span id=\"resultName\"></span></p>
 <p><strong>Email:</strong> <span id=\"resultEmail\"></span></p>
 <p><strong>Time:</strong> <span id=\"resultTime\"></span></p>
 </div>
 
 <div class=\"stats\">
+<div class=\"stat-card\">
 <div class=\"stat-number\" id=\"totalCount\">0</div>
 <div class=\"stat-label\">Total Scanned</div>
 </div>
+<div class=\"stat-card\">
+<div class=\"stat-number\" id=\"syncCount\">0</div>
+<div class=\"stat-label\">Synced Online</div>
+</div>
+</div>
 
 <div class=\"buttons\">
-<button class=\"btn-export\" onclick=\"exportCSV()\">📥 Export CSV</button>
-<button class=\"btn-clear\" onclick=\"clearAll()\">🗑️ Clear All</button>
+<button class=\"btn-export\" onclick=\"exportCSV()\">📥 Export Backup CSV</button>
+<button class=\"btn-clear\" onclick=\"clearLocal()\">🗑️ Clear Local Data</button>
 </div>
 
 <div class=\"log-section\">
-<h3>Recent Scans:</h3>
+<h3>📋 Recent Scans:</h3>
 <div class=\"log\" id=\"logContainer\">
 <p class=\"no-data\">No scans yet</p>
 </div>
@@ -82,73 +99,78 @@ button{padding:12px 25px;border:none;border-radius:8px;cursor:pointer;font-weigh
 </div>
 
 <script>
-let attendanceData = [];
-let totalCount = 0;
+// ============================================
+// PASTE GOOGLE APPS SCRIPT URL HERE
+// ============================================
+const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+// Global variables
+let localData = [];
+let totalScans = 0;
+let syncedScans = 0;
 let lastScan = '';
 let lastScanTime = 0;
 let scanTimeout;
 
-// Load saved data
-const savedData = localStorage.getItem('attendance');
-if (savedData) {
+// Load local data
+const saved = localStorage.getItem('attendance');
+if (saved) {
 try {
-attendanceData = JSON.parse(savedData);
-totalCount = attendanceData.length;
+localData = JSON.parse(saved);
+totalScans = localData.length;
 updateDisplay();
 } catch(e) {
-console.error('Error loading data:', e);
+console.error('Error loading:', e);
 }
 }
 
-const input = document.getElementById('nameInput');
+const input = document.getElementById('scanInput');
 const status = document.getElementById('status');
+const syncStatus = document.getElementById('syncStatus');
 
-// Auto-focus input
+// Check script URL configured
+if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+syncStatus.innerHTML = '⚠️ Google Sheets configured. Data saved locally only.';
+syncStatus.style.background = '#fff3cd';
+syncStatus.style.borderColor = '#ffc107';
+syncStatus.style.color = '#856404';
+} else {
+syncStatus.innerHTML = '✅ Connected Google Sheets - Auto-sync enabled';
+syncStatus.style.background = '#d4edda';
+syncStatus.style.borderColor = '#28a745';
+syncStatus.style.color = '#155724';
+}
+
+// Auto-focus
 input.focus();
 document.addEventListener('click', () => input.focus());
 
 // AUTO-SUBMIT: Detect scanner input
 input.addEventListener('input', function() {
-// Clear previous timeout
 clearTimeout(scanTimeout);
 
-// Show scanning status
-status.innerHTML = '<span class=\"pulse\"></span>Scanning...';
+status.innerHTML = '<span class=\"pulse\"></span><span>Scanning...</span>';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
 
-// Wait 100ms typing stops (scanner fast)
+// Wait 150ms typing stops (scanner fast)
 scanTimeout = setTimeout(() => {
-const scannedData = input.value.trim();
-
-if (scannedData) {
-// Auto-submit
-autoSubmit(scannedData);
-}
-}, 100);
-});
-
-// Also support manual Enter key
-input.addEventListener('keypress', function(e) {
-if (e.key === 'Enter') {
-e.preventDefault();
-clearTimeout(scanTimeout);
 const data = input.value.trim();
 if (data) {
 autoSubmit(data);
 }
-}
+}, 150);
 });
 
 // Auto-submit function
 function autoSubmit(text) {
 const currentTime = Date.now();
 
-// Prevent duplicate scans (within 2 seconds)
+// Prevent duplicates (within 2 seconds)
 if (text === lastScan && (currentTime - lastScanTime) < 2000) {
-console.log('Duplicate scan ignored');
+console.log('Duplicate ignored');
 input.value = '';
-status.innerHTML = '<span class=\"pulse\"></span>Ready scan';
+status.innerHTML = '<span class=\"pulse\"></span><span>Ready scan</span>';
 status.style.background = '#d4edda';
 status.style.color = '#155724';
 return;
@@ -173,26 +195,23 @@ console.log('Processing:', text);
 let name = '';
 let email = '';
 
-// Try parse JSON
 try {
 const json = JSON.parse(text);
 name = json.name || '';
 email = json.email || '';
 } catch(e) {
-// JSON - check comma-separated
 if (text.includes(',')) {
 const parts = text.split(',').map(p => p.trim());
-name = parts[0] || 'Unknown';
+name = parts[0] || '';
 email = parts[1] || 'N/A';
 } else {
-// name
 name = text;
 email = 'N/A';
 }
 }
 
 if (!name) {
-status.innerHTML = '<span class=\"pulse\"></span>Ready scan';
+status.innerHTML = '<span class=\"pulse\"></span><span>Ready scan</span>';
 status.style.background = '#d4edda';
 status.style.color = '#155724';
 return;
@@ -202,7 +221,7 @@ saveRecord(name, email);
 }
 
 // Save record
-function saveRecord(name, email) {
+async function saveRecord(name, email) {
 const = new Date();
 const record = {
 event: 'Annual Gathering 2026',
@@ -212,8 +231,10 @@ time: now.toLocaleString('en-SG'),
 timestamp: now.toISOString()
 };
 
-attendanceData.unshift(record);
-localStorage.setItem('attendance', JSON.stringify(attendanceData));
+// Save locally first
+localData.unshift(record);
+localStorage.setItem('attendance', JSON.stringify(localData));
+totalScans = localData.length;
 
 // Show result
 document.getElementById('resultName').textContent = name;
@@ -225,35 +246,85 @@ setTimeout(() => {
 document.getElementById('result').style.display = 'none';
 }, 4000);
 
-// Update count
-totalCount = attendanceData.length;
 updateDisplay();
 
-// Update status
-status.innerHTML = '✅ Recorded successfully!';
-status.style.background = '#d4edda';
-status.style.color = '#155724';
+// Sync Google Sheets
+if (SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbw87VM6uc27LrwI4_tKPD3JSKq3S8N4VqwCScjBckmzbaYViYtUYcwNK3hhHwgTtDG78A/exec') {
+await syncToGoogleSheets(record);
+} else {
+status.innerHTML = '<span class=\"pulse\"></span><span>Saved locally</span>';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
 
 setTimeout(() => {
-status.innerHTML = '<span class=\"pulse\"></span>Ready scan';
+status.innerHTML = '<span class=\"pulse\"></span><span>Ready scan</span>';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
 }, 2000);
+}
 
 console.log('Saved:', record);
 }
 
+// Sync Google Sheets
+async function syncToGoogleSheets(record) {
+try {
+status.innerHTML = '☁️ Syncing Google Sheets...';
+status.style.background = '#e7f3ff';
+status.style.color = '#1565C0';
+
+const response = await fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify(record)
+});
+
+syncedScans++;
+localStorage.setItem('syncedCount', syncedScans);
+
+status.innerHTML = '<span class=\"pulse\"></span><span>✅ Synced Google Sheets!</span>';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+
+syncStatus.innerHTML = '✅ Last sync: ' + new Date().toLocaleTimeString('en-SG');
+syncStatus.style.background = '#d4edda';
+
+setTimeout(() => {
+status.innerHTML = '<span class=\"pulse\"></span><span>Ready scan</span>';
+}, 2000);
+
+updateDisplay();
+
+console.log('Synced Google Sheets');
+} catch (error) {
+console.error('Sync error:', error);
+status.innerHTML = '⚠️ Saved locally (sync failed)';
+status.style.background = '#fff3cd';
+status.style.color = '#856404';
+
+setTimeout(() => {
+status.innerHTML = '<span class=\"pulse\"></span><span>Ready scan</span>';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+}, 3000);
+}
+}
+
 // Update display
 function updateDisplay() {
-document.getElementById('totalCount').textContent = totalCount;
+document.getElementById('totalCount').textContent = totalScans;
+document.getElementById('syncCount').textContent = syncedScans;
 
 const logContainer = document.getElementById('logContainer');
 
-if (attendanceData.length === 0) {
+if (localData.length === 0) {
 logContainer.innerHTML = '<p class=\"no-data\">No scans yet</p>';
 return;
 }
 
 let html = '';
-attendanceData.slice(0, 15).forEach(record => {
+localData.slice(0, 15).forEach(record => {
 html += `
 <div class=\"log-entry\">
 <p><strong>\\\${record.name}</strong></p>
@@ -268,44 +339,50 @@ logContainer.innerHTML = html;
 
 // Export CSV
 function exportCSV() {
-if (attendanceData.length === 0) {
+if (localData.length === 0) {
 alert('No data export');
 return;
 }
 
 let csv = 'Event,Name,Email,Timestamp
 ';
-attendanceData.forEach(record => {
-csv += `\\\"\\\${record.event}\\\",\\\"\\\${record.name}\\\",\\\"\\\${record.email}\\\",\\\"\\\${record.time}\\\"
+localData.forEach(record => {
+csv += `\"\\\${record.event}\",\"\\\${record.name}\",\"\\\${record.email}\",\"\\\${record.time}\"
 `;
 });
 
-const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+const blob = new Blob([csv], { type: 'text/csv' });
 const url = URL.createObjectURL(blob);
 const link = document.createElement('a');
 link.href = url;
-link.download = 'Annual_Gathering_2026_Attendance.csv';
+link.download = 'Backup_Annual_Gathering_2026.csv';
 document.body.appendChild(link);
 link.click();
 document.body.removeChild(link);
 URL.revokeObjectURL(url);
 
-alert('Exported ' + attendanceData.length + ' records CSV');
+alert('Exported ' + localData.length + ' records backup CSV');
 }
 
-// Clear all
-function clearAll() {
-if (confirm('Clear attendance records? cannot undone.')) {
-attendanceData = [];
-totalCount = 0;
+// Clear local data
+function clearLocal() {
+if (confirm('Clear LOCAL data?
+
+Google Sheets data remain safe.
+
+This clear browser data only.')) {
+localData = [];
+totalScans = 0;
 localStorage.removeItem('attendance');
 updateDisplay();
-alert('All data cleared');
+alert('Local data cleared. Google Sheets data intact.');
 }
 }
 
-console.log('Auto-Scan Mode: Scanner ready!');
-console.log('Loaded', totalCount, 'existing records');
+console.log('=================================');
+console.log('Auto-Scan Mode: Ready!');
+console.log('Total scans:', totalScans);
+console.log('=================================');
 </script>
 </body>
 </html>
