@@ -3,104 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annual Gathering 2026 - Attendance Scanner</title>
+    <title>Annual Gathering 2026 - Attendance</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header>
             <h1>📱 QR Attendance Scanner</h1>
             <p>NCS Event Management System</p>
         </header>
 
-        <!-- Fixed Event Display -->
         <div class="event-display">
             <h2>📅 Annual Gathering 2026</h2>
             <p class="event-subtitle">Attendance Registration</p>
         </div>
 
-        <!-- Scanner Input Section -->
-        <div class="scanner-input-section">
-            <h2>🔍 Scan Attendee QR Code</h2>
-            <p class="instruction">Point your scanner at the QR code on the attendee's badge</p>
-            
-            <div class="input-container">
-                <input type="text" 
-                       id="qrInput" 
-                       placeholder="Ready to scan... (or type manually)" 
-                       autofocus 
-                       autocomplete="off">
-                <div class="scan-indicator" id="scanIndicator">
-                    <span class="pulse"></span>
-                    Ready to Scan
-                </div>
-            </div>
-            
-            <div class="quick-actions">
-                <button onclick="clearInput()" class="btn-secondary">Clear</button>
-                <button onclick="manualSubmit()" class="btn-primary">Submit Manually</button>
-            </div>
+        <div class="scanner-section">
+            <h3>🔍 Scan or Enter Name</h3>
+            <input type="text" id="qrInput" placeholder="Type name and press Enter" autofocus>
+            <div class="scan-status" id="scanStatus">Ready to scan</div>
         </div>
 
-        <!-- Display Scanned Result -->
-        <div id="result-container" style="display:none;">
-            <div class="success-message">
-                <h2>✅ Attendance Recorded!</h2>
-                <div class="attendee-info">
-                    <p><strong>Event:</strong> <span id="event-name">Annual Gathering 2026</span></p>
-                    <p><strong>Name:</strong> <span id="attendee-name"></span></p>
-                    <p><strong>Email:</strong> <span id="attendee-email"></span></p>
-                    <p><strong>Time:</strong> <span id="scan-time"></span></p>
-                </div>
-            </div>
+        <div class="result" id="result" style="display:none;">
+            <h2>✅ Attendance Recorded!</h2>
+            <p><strong>Name:</strong> <span id="resultName"></span></p>
+            <p><strong>Email:</strong> <span id="resultEmail"></span></p>
+            <p><strong>Time:</strong> <span id="resultTime"></span></p>
         </div>
 
-        <!-- Status Messages -->
-        <div id="status-message"></div>
-
-        <!-- Statistics -->
-        <div class="statistics">
-            <div class="stat-card">
-                <div class="stat-number" id="totalScans">0</div>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="totalCount">0</div>
                 <div class="stat-label">Total Attendees</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="todayScans">0</div>
-                <div class="stat-label">Today's Scans</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="syncStatus">✓</div>
-                <div class="stat-label">Sync Status</div>
-            </div>
         </div>
 
-        <!-- Attendance Log -->
-        <div class="attendance-log">
-            <div class="log-header">
-                <h3>Recent Scans</h3>
-                <div class="log-actions">
-                    <button onclick="exportToCSV()" class="btn-export">
-                        📥 Export to CSV
-                    </button>
-                    <button onclick="clearAllData()" class="btn-danger">
-                        🗑️ Clear All
-                    </button>
-                </div>
-            </div>
-            <div id="log-container">
-                <p class="no-data">No scans yet. Start scanning to see attendance records.</p>
-            </div>
+        <div class="log-section">
+            <h3>Recent Scans</h3>
+            <button onclick="exportCSV()" class="btn-export">📥 Export CSV</button>
+            <button onclick="clearAll()" class="btn-clear">🗑️ Clear All</button>
+            <div id="logContainer">No scans yet</div>
         </div>
-
-        <!-- Footer -->
-        <footer>
-            <p>NCS Event Management System | Annual Gathering 2026</p>
-            <p class="version">Version 1.0 | Last sync: <span id="lastSync">Never</span></p>
-        </footer>
     </div>
 
-    <!-- Scripts -->
     <script src="config.js"></script>
     <script src="scanner.js"></script>
 </body>
