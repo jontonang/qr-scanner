@@ -153,13 +153,13 @@ status.innerHTML = '<span class=\"pulse\"></span><span>Scanning...</span>';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
 
-// Wait 150ms typing stops (scanner fast)
+// Wait 100ms typing stops (scanner fast)
 scanTimeout = setTimeout(() => {
 const data = input.value.trim();
 if (data) {
 autoSubmit(data);
 }
-}, 150);
+}, 100);
 });
 
 // Auto-submit function
