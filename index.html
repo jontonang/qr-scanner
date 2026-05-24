@@ -1,470 +1,296 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset=\"UTF-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-<title>Annual Gathering 2026 - Debug Mode</title>
+<meta charset="UTF-8">
+<title>Annual Gathering 2026</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
-.container{max-width:700px;margin:0 auto;background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-h1{color:#333;text-align:center;margin-bottom:10px;font-size:2em}
-.event-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
-.event-box h2{font-size:2em;margin-bottom:10px}
-.input-section{margin:20px 0}
-#scanInput{width:100%;padding:20px;font-size:20px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold}
-#scanInput:focus{outline:none;border-color:#5568d3;box-shadow:0 0 0 3px rgba(102,126,234,0.2)}
-.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;font-weight:bold;text-align:center;margin:15px 0;font-size:16px}
-.debug-box{background:#f8f9fa;border:2px solid #6c757d;padding:15px;border-radius:8px;margin:15px 0;font-family:monospace;font-size:12px;max-height:200px;overflow-y:auto}
-.debug-box h4{color:#333;margin-bottom:10px;font-family:Arial}
-.error-box{background:#f8d7da;border:2px solid #dc3545;color:#721c24;padding:15px;border-radius:8px;margin:15px 0}
-.success-box{background:#d4edda;border:2px solid #28a745;color:#155724;padding:15px;border-radius:8px;margin:15px 0}
+body{font-family:Arial;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px;margin:0}
+.box{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+h1{color:#333;text-align:center;margin-bottom:20px}
+.event{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center;margin-bottom:20px}
+.event h2{margin:0 0 10px;font-size:1.8em}
+input{width:100%;padding:20px;font-size:20px;border:3px solid #667eea;border-radius:10px;text-align:center;font-weight:bold;margin:15px 0;box-sizing:border-box}
+input:focus{outline:none;border-color:#5568d3}
+.status{padding:15px;background:#d4edda;color:#155724;border-radius:8px;text-align:center;margin:15px 0;font-weight:bold}
 .result{background:#d4edda;border:2px solid #28a745;padding:20px;border-radius:10px;margin:20px 0;display:none}
-.result h3{color:#155724;margin-bottom:15px}
-.result p{margin:10px 0;font-size:16px}
-.stats{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:25px;border-radius:12px;text-align:center;margin:20px 0}
-.stat-number{font-size:4em;font-weight:bold}
-.stat-label{font-size:1.2em;opacity:0.9;margin-top:10px}
-button{padding:12px 25px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:16px;margin:5px;transition:0.3s}
-.btn-test{background:#667eea;color:#fff}
-.btn-test:hover{background:#5568d3}
+.result h3{color:#155724;margin:0 0 15px}
+.result p{margin:8px 0}
+.count{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center;margin:20px 0}
+.count .num{font-size:3em;font-weight:bold}
+.count .label{font-size:1em;margin-top:10px}
+button{width:100%;padding:15px;font-size:18px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;margin:5px 0}
 .btn-export{background:#28a745;color:#fff}
-.btn-export:hover{background:#218838}
 .btn-clear{background:#dc3545;color:#fff}
-.btn-clear:hover{background:#c82333}
 .log{background:#f8f9fa;padding:15px;border-radius:10px;max-height:300px;overflow-y:auto;margin-top:15px}
-.log-entry{background:#fff;padding:15px;margin:10px 0;border-radius:8px;border-left:4px solid #667eea}
-.log-entry p{margin:5px 0;color:#555;font-size:14px}
+.entry{background:#fff;padding:12px;margin:8px 0;border-radius:6px;border-left:4px solid #667eea}
+.entry p{margin:4px 0;color:#555;font-size:14px}
 </style>
 </head>
 <body>
-<div class=\"container\">
-<h1>📱 QR Scanner - Debug Mode</h1>
+<div class="box">
+<h1>📱 QR Attendance Scanner</h1>
 
-<div class=\"event-box\">
+<div class="event">
 <h2>📅 Annual Gathering 2026</h2>
-<p>Diagnostic Testing Mode</p>
+<p>Auto-Scan Mode</p>
 </div>
 
-<!-- Configuration Status -->
-<div id=\"configStatus\"></div>
+<input type="text" id="input" placeholder="Ready to scan..." autofocus>
+<div class="status" id="status">Ready to scan</div>
 
-<!-- Debug Console -->
-<div class=\"debug-box\">
-<h4>🔍 Debug Console:</h4>
-<div id=\"debugLog\">Initializing...</div>
+<div class="result" id="result">
+<h3>✅ Recorded!</h3>
+<p><strong>Name:</strong> <span id="rName"></span></p>
+<p><strong>Email:</strong> <span id="rEmail"></span></p>
+<p><strong>Time:</strong> <span id="rTime"></span></p>
 </div>
 
-<!-- Input Section -->
-<div class=\"input-section\">
-<input type=\"text\" id=\"scanInput\" placeholder=\"Type test data...\" autofocus>
-<div class=\"status\" id=\"status\">Ready test</div>
+<div class="count">
+<div class="num" id="count">0</div>
+<div class="label">Total Scanned</div>
 </div>
 
-<!-- Result -->
-<div class=\"result\" id=\"result\">
-<h3>✅ Test Successful!</h3>
-<p><strong>Name:</strong> <span id=\"resultName\"></span></p>
-<p><strong>Email:</strong> <span id=\"resultEmail\"></span></p>
-<p><strong>Time:</strong> <span id=\"resultTime\"></span></p>
-</div>
+<button class="btn-export" id="btnExport">📥 Export CSV</button>
+<button class="btn-clear" id="btnClear">🗑️ Clear All</button>
 
-<!-- Stats -->
-<div class=\"stats\">
-<div class=\"stat-number\" id=\"totalCount\">0</div>
-<div class=\"stat-label\">Total Attempts</div>
-</div>
-
-<!-- Test Buttons -->
-<div style=\"text-align:center;margin:20px 0\">
-<button class=\"btn-test\" onclick=\"testScriptURL()\">🔧 Test Script URL</button>
-<button class=\"btn-test\" onclick=\"testSubmit()\">📝 Test Submit</button>
-<button class=\"btn-export\" onclick=\"exportCSV()\">📥 Export CSV</button>
-<button class=\"btn-clear\" onclick=\"clearData()\">🗑️ Clear</button>
-</div>
-
-<!-- Recent Scans -->
-<h3 style=\"color:#333;margin:20px 0 10px\">Recent Attempts:</h3>
-<div class=\"log\" id=\"logContainer\">
-<p style=\"text-align:center;color:#999;padding:20px\">No attempts yet</p>
-</div>
+<h3 style="color:#333;margin:20px 0 10px">Recent Scans:</h3>
+<div class="log" id="log">No scans yet</div>
 </div>
 
 <script>
-// ============================================
-// https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec
-// ============================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec';
+// PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec';
 
-// Global variables
-let localData = [];
-let totalCount = 0;
-let debugMessages = [];
-
-// Debug logging
-function addDebug(message, type = 'info') {
-const = new Date().toLocaleTimeString();
-const msg = `[\\\${timestamp}] \\\${message}`;
-debugMessages.unshift(msg);
-
-const debugLog = document.getElementById('debugLog');
-debugLog.innerHTML = debugMessages.slice(0, 20).join('<br>');
-
-console.log(msg);
-}
-
-// Check configuration
-function checkConfig() {
-const configStatus = document.getElementById('configStatus');
-
-if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec') {
-configStatus.innerHTML = `
-<div class=\"error-box\">
-<h4>❌ Configuration Error</h4>
-<p><strong>Problem:</strong> Google Apps Script URL configured</p>
-<p><strong>Solution:</strong> Replace 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec' actual URL</p>
-<p><strong>URL be:</strong> [URL_REMOVED]</div>
-`;
-addDebug('ERROR: Script URL configured', 'error');
-return false;
-} else {
-configStatus.innerHTML = `
-<div class=\"success-box\">
-<h4>✅ Configuration OK</h4>
-<p><strong>Script URL:</strong> \\\${SCRIPT_URL.substring(0, 50)}...</p>
-<p><strong>Status:</strong> Ready test</p>
-</div>
-`;
-addDebug('Configuration OK');
-return true;
-}
-}
-
-// Test script URL
-async function testScriptURL() {
-addDebug('Testing script URL...');
-const status = document.getElementById('status');
-
-if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec') {
-status.textContent = '❌ Error: Script URL configured';
-status.style.background = '#f8d7da';
-status.style.color = '#721c24';
-addDebug('ERROR: Cannot test - URL configured', 'error');
-alert('Please configure Google Apps Script URL first!');
-return;
-}
-
-status.textContent = '🔄 Testing connection...';
-status.style.background = '#fff3cd';
-status.style.color = '#856404';
-
-try {
-addDebug('Sending test request...');
-
-const testData = {
-name: 'Test User',
-email: 'test@test.com',
-time: new Date().toLocaleString()
-};
-
-addDebug('Test data: ' + JSON.stringify(testData));
-
-const response = await fetch(SCRIPT_URL, {
-method: 'POST',
-headers: {'Content-Type': 'application/json'},
-body: JSON.stringify(testData)
-});
-
-addDebug('Response status: ' + response.status);
-addDebug('Response type: ' + response.type);
-
-if (response.ok || response.type === 'opaque') {
-status.textContent = '✅ Connection successful!';
-status.style.background = '#d4edda';
-status.style.color = '#155724';
-addDebug('SUCCESS: Script responding');
-alert('✅ Connection successful!
-
-Script working.
-Check Google Sheets new row.');
-} else {
-throw new Error('Response status: ' + response.status);
-}
-
-} catch (error) {
-status.textContent = '❌ Connection failed';
-status.style.background = '#f8d7da';
-status.style.color = '#721c24';
-addDebug('ERROR: ' + error.message, 'error');
-alert('❌ Connection failed!
-
-Error: ' + error.message + '
-
-Check:
-1. Script URL correct?
-2. Script deployed?
-3. Internet connection working?');
-}
-}
+var data = [];
+var count = 0;
+var timeout;
 
 // Load saved data
-const saved = localStorage.getItem('attendance');
+var saved = localStorage.getItem('attendance');
 if (saved) {
 try {
-localData = JSON.parse(saved);
-totalCount = localData.length;
+data = JSON.parse(saved);
+count = data.length;
 updateDisplay();
-addDebug('Loaded ' + totalCount + ' saved records');
-} catch(e) {
-addDebug('ERROR loading saved data: ' + e.message, 'error');
-}
+} catch(e) {}
 }
 
-const input = document.getElementById('scanInput');
-const status = document.getElementById('status');
+var input = document.getElementById('input');
+var status = document.getElementById('status');
 
+// Auto-focus
 input.focus();
+document.addEventListener('click', function() {
+input.focus();
+});
 
-// Auto-submit
-let scanTimeout;
+// Auto-submit when typing stops
 input.addEventListener('input', function() {
-clearTimeout(scanTimeout);
-
-status.textContent = 'Typing...';
+clearTimeout(timeout);
+status.textContent = 'Scanning...';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
 
-scanTimeout = setTimeout(() => {
-const data = input.value.trim();
-if (data) {
-addDebug('Auto-submitting: ' + data);
-autoSubmit(data);
+timeout = setTimeout(function() {
+var text = input.value.trim();
+if (text) {
+submit(text);
 }
-}, 150);
+}, 200);
 });
 
-// Enter key
+// Also support Enter key
 input.addEventListener('keypress', function(e) {
 if (e.key === 'Enter') {
 e.preventDefault();
-const data = input.value.trim();
-if (data) {
-addDebug('Manual submit (Enter): ' + data);
-autoSubmit(data);
+clearTimeout(timeout);
+var text = input.value.trim();
+if (text) {
+submit(text);
 }
 }
 });
 
-// Auto-submit
-function autoSubmit(text) {
-input.value = '';
-processData(text);
-}
+// Submit function
+function submit(text) {
+console.log('Processing:', text);
 
-// Test submit
-function testSubmit() {
-const testData = 'Test User ' + new Date().getTime() + ', test@email.com';
-addDebug('Test submit: ' + testData);
-processData(testData);
-}
+var name = '';
+var email = '';
 
-// Process data
-function processData(text) {
-addDebug('Processing: ' + text);
-
-let name = '';
-let email = '';
-
+// Try parse JSON
 try {
-const json = JSON.parse(text);
+var json = JSON.parse(text);
 name = json.name || '';
 email = json.email || '';
-addDebug('Parsed JSON: name=' + name + ', email=' + email);
 } catch(e) {
-if (text.includes(',')) {
-const parts = text.split(',').map(p => p.trim());
-name = parts[0];
-email = parts[1] || 'N/A';
-addDebug('Parsed CSV: name=' + name + ', email=' + email);
+// Not JSON - check comma
+if (text.indexOf(',') > -1) {
+var parts = text.split(',');
+name = parts[0].trim();
+email = parts[1].trim();
 } else {
 name = text;
 email = 'N/A';
-addDebug('Plain text: name=' + name);
 }
 }
 
 if (!name) {
-addDebug('ERROR: name extracted', 'error');
-status.textContent = '❌ Invalid data';
-status.style.background = '#f8d7da';
-status.style.color = '#721c24';
+status.textContent = 'Ready to scan';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+input.value = '';
 return;
 }
 
-saveRecord(name, email);
+save(name, email);
+input.value = '';
+input.focus();
 }
 
 // Save record
-async function saveRecord(name, email) {
-const = new Date();
-const record = {
+function save(name, email) {
+var now = new Date();
+var record = {
 event: 'Annual Gathering 2026',
 name: name,
 email: email,
-time: now.toLocaleString('en-SG'),
-timestamp: now.toISOString()
+time: now.toLocaleString('en-SG')
 };
 
-addDebug('Saving record: ' + JSON.stringify(record));
-
-// Save locally
-localData.unshift(record);
-localStorage.setItem('attendance', JSON.stringify(localData));
-totalCount = localData.length;
+data.unshift(record);
+localStorage.setItem('attendance', JSON.stringify(data));
+count = data.length;
 
 // Show result
-document.getElementById('resultName').textContent = name;
-document.getElementById('resultEmail').textContent = email;
-document.getElementById('resultTime').textContent = record.time;
+document.getElementById('rName').textContent = name;
+document.getElementById('rEmail').textContent = email;
+document.getElementById('rTime').textContent = record.time;
 document.getElementById('result').style.display = 'block';
 
-setTimeout(() => {
+setTimeout(function() {
 document.getElementById('result').style.display = 'none';
 }, 4000);
 
 updateDisplay();
 
-// Sync Google Sheets
+// Sync to Google Sheets
 if (SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbw-rszpjsd8KOfeiX2oQbQYL2ELxbJkh6QxJoib-i7fTFRqzlciDvkYXjNxipVg8hiSug/exec') {
-await syncToGoogle(record);
+syncGoogle(record);
 } else {
-addDebug('SKIPPED: Google sync (URL configured)', 'warning');
-status.textContent = '⚠️ Saved locally (Google configured)';
+status.textContent = '✅ Saved locally';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
-}
-}
-
-// Sync Google Sheets
-async function syncToGoogle(record) {
-addDebug('Starting Google Sheets sync...');
-
-status.textContent = '☁️ Syncing Google Sheets...';
-status.style.background = '#e7f3ff';
-status.style.color = '#1565C0';
-
-try {
-addDebug('Sending data: ' + JSON.stringify(record));
-
-const response = await fetch(SCRIPT_URL, {
-method: 'POST',
-headers: {'Content-Type': 'application/json'},
-body: JSON.stringify(record)
-});
-
-addDebug('Response received - Status: ' + response.status + ', Type: ' + response.type);
-
-if (response.ok || response.type === 'opaque') {
-addDebug('SUCCESS: Data sent Google Sheets');
-status.textContent = '✅ Synced Google Sheets!';
-status.style.background = '#d4edda';
-status.style.color = '#155724';
-} else {
-throw new Error('HTTP ' + response.status);
-}
-
-setTimeout(() => {
-status.textContent = 'Ready scan';
+setTimeout(function() {
+status.textContent = 'Ready to scan';
 status.style.background = '#d4edda';
 status.style.color = '#155724';
 }, 2000);
+}
 
-} catch (error) {
-addDebug('ERROR syncing: ' + error.message, 'error');
-status.textContent = '❌ Sync failed: ' + error.message;
-status.style.background = '#f8d7da';
-status.style.color = '#721c24';
+console.log('Saved:', record);
+}
 
-setTimeout(() => {
-status.textContent = 'Ready scan (saved locally)';
+// Sync to Google Sheets
+function syncGoogle(record) {
+status.textContent = '☁️ Syncing...';
+status.style.background = '#e7f3ff';
+status.style.color = '#1565C0';
+
+fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify(record)
+})
+.then(function() {
+status.textContent = '✅ Synced to Google Sheets!';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
+setTimeout(function() {
+status.textContent = 'Ready to scan';
+}, 2000);
+})
+.catch(function(error) {
+console.error('Sync error:', error);
+status.textContent = '⚠️ Saved locally only';
 status.style.background = '#fff3cd';
 status.style.color = '#856404';
+setTimeout(function() {
+status.textContent = 'Ready to scan';
+status.style.background = '#d4edda';
+status.style.color = '#155724';
 }, 3000);
-}
+});
 }
 
 // Update display
 function updateDisplay() {
-document.getElementById('totalCount').textContent = totalCount;
+document.getElementById('count').textContent = count;
 
-const logContainer = document.getElementById('logContainer');
+var logDiv = document.getElementById('log');
 
-if (localData.length === 0) {
-logContainer.innerHTML = '<p style=\"text-align:center;color:#999;padding:20px\">No attempts yet</p>';
+if (data.length === 0) {
+logDiv.innerHTML = '<p style="text-align:center;color:#999;padding:15px">No scans yet</p>';
 return;
 }
 
-let html = '';
-localData.slice(0, 10).forEach(record => {
-html += `
-<div class=\"log-entry\">
-<p><strong>\\\${record.name}</strong></p>
-<p>Email: \\\${record.email}</p>
-<p>Time: \\\${record.time}</p>
-</div>
-`;
-});
-
-logContainer.innerHTML = html;
+var html = '';
+for (var i = 0; i < Math.min(data.length, 10); i++) {
+var r = data[i];
+html += '<div class="entry">';
+html += '<p><strong>' + r.name + '</strong></p>';
+html += '<p>Email: ' + r.email + '</p>';
+html += '<p>Time: ' + r.time + '</p>';
+html += '</div>';
 }
 
-// Export CSV
-function exportCSV() {
-if (localData.length === 0) {
-alert('No data export');
+logDiv.innerHTML = html;
+}
+
+// Export CSV button
+document.getElementById('btnExport').addEventListener('click', function() {
+if (data.length === 0) {
+alert('No data to export');
 return;
 }
 
-let csv = 'Event,Name,Email,Timestamp
+var csv = 'Event,Name,Email,Timestamp
 ';
-localData.forEach(record => {
-csv += `\"\\\${record.event}\",\"\\\${record.name}\",\"\\\${record.email}\",\"\\\${record.time}\"
-`;
-});
+for (var i = 0; i < data.length; i++) {
+var r = data[i];
+csv += '"' + r.event + '","' + r.name + '","' + r.email + '","' + r.time + '"
+';
+}
 
-const blob = new Blob([csv], { type: 'text/csv' });
-const url = URL.createObjectURL(blob);
-const link = document.createElement('a');
-link.href = url;
-link.download = 'Debug_Export.csv';
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
+var blob = new Blob([csv], {type: 'text/csv'});
+var url = URL.createObjectURL(blob);
+var a = document.createElement('a');
+a.href = url;
+a.download = 'Annual_Gathering_2026_Attendance.csv';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
 URL.revokeObjectURL(url);
 
-addDebug('Exported ' + localData.length + ' records');
-alert('Exported ' + localData.length + ' records');
-}
+alert('Exported ' + data.length + ' records to CSV');
+});
 
-// Clear data
-function clearData() {
-if (confirm('Clear local data?')) {
-localData = [];
-totalCount = 0;
+// Clear button
+document.getElementById('btnClear').addEventListener('click', function() {
+if (confirm('Clear all local data?
+
+Google Sheets data will remain safe.')) {
+data = [];
+count = 0;
 localStorage.removeItem('attendance');
 updateDisplay();
-addDebug('Local data cleared');
+alert('Local data cleared');
 }
-}
+});
 
-// Initialize
-addDebug('=== QR Scanner Debug Mode ===');
-addDebug('Checking configuration...');
-checkConfig();
-addDebug('Ready testing');
-
-console.log('Debug mode active');
-console.log('Script URL:', SCRIPT_URL);
+console.log('Scanner ready!');
+console.log('Total records:', count);
 </script>
 </body>
 </html>
