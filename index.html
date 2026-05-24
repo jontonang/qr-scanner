@@ -3,71 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event QR Attendance Scanner</title>
+    <title>Annual Gathering 2026 - Attendance Scanner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>📱 Event Attendance Scanner</h1>
-            <p>Scan QR codes to record attendance</p>
+            <h1>📱 QR Attendance Scanner</h1>
+            <p>NCS Event Management System</p>
         </header>
 
-        <!-- Event Selection -->
-        <div class="event-selection">
-            <label for="eventSelect">Select Event:</label>
-            <select id="eventSelect">
-                <option value="">-- Choose Event --</option>
-                <option value="Tech Conference 2026">Tech Conference 2024</option>
-                <option value="Annual Dinner 2026">Annual Dinner</option>
-                <option value="Workshop Session">Workshop Session</option>
-            </select>
+        <!-- Fixed Event Display -->
+        <div class="event-display">
+            <h2>📅 Annual Gathering 2026</h2>
+            <p class="event-subtitle">Attendance Registration</p>
         </div>
 
-        <!-- QR Scanner Area -->
-       <!-- Remove or hide the camera scanner section -->
-<!-- Add this new section instead -->
-
-<div class="scanner-input-section">
-    <h2>🔍 Scan Attendee QR Code</h2>
-    <p class="instruction">Point your scanner at the QR code on the attendee's badge</p>
-    
-    <div class="input-container">
-        <input type="text" 
-               id="qrInput" 
-               placeholder="Ready to scan... (or type manually)" 
-               autofocus 
-               autocomplete="off">
-        <div class="scan-indicator" id="scanIndicator">
-            <span class="pulse"></span>
-            Ready to Scan
+        <!-- Scanner Input Section -->
+        <div class="scanner-input-section">
+            <h2>🔍 Scan Attendee QR Code</h2>
+            <p class="instruction">Point your scanner at the QR code on the attendee's badge</p>
+            
+            <div class="input-container">
+                <input type="text" 
+                       id="qrInput" 
+                       placeholder="Ready to scan... (or type manually)" 
+                       autofocus 
+                       autocomplete="off">
+                <div class="scan-indicator" id="scanIndicator">
+                    <span class="pulse"></span>
+                    Ready to Scan
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <button onclick="clearInput()" class="btn-secondary">Clear</button>
+                <button onclick="manualSubmit()" class="btn-primary">Submit Manually</button>
+            </div>
         </div>
-    </div>
-    
-    <div class="quick-actions">
-        <button onclick="clearInput()" class="btn-secondary">Clear</button>
-        <button onclick="manualSubmit()" class="btn-primary">Submit Manually</button>
-    </div>
-</div>
+
+        <!-- Display Scanned Result -->
+        <div id="result-container" style="display:none;">
+            <div class="success-message">
+                <h2>✅ Attendance Recorded!</h2>
+                <div class="attendee-info">
+                    <p><strong>Event:</strong> <span id="event-name">Annual Gathering 2026</span></p>
+                    <p><strong>Name:</strong> <span id="attendee-name"></span></p>
+                    <p><strong>Email:</strong> <span id="attendee-email"></span></p>
+                    <p><strong>Time:</strong> <span id="scan-time"></span></p>
+                </div>
+            </div>
+        </div>
+
         <!-- Status Messages -->
         <div id="status-message"></div>
 
-        <!-- Attendance Log -->
-        <div class="attendance-log">
-            <h3>Recent Scans</h3>
-            <div id="log-container">
-                <p class="no-data">No scans yet</p>
+        <!-- Statistics -->
+        <div class="statistics">
+            <div class="stat-card">
+                <div class="stat-number" id="totalScans">0</div>
+                <div class="stat-label">Total Attendees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayScans">0</div>
+                <div class="stat-label">Today's Scans</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="syncStatus">✓</div>
+                <div class="stat-label">Sync Status</div>
             </div>
         </div>
+
+        <!-- Attendance Log -->
+        <div class="attendance-log">
+            <div class="log-header">
+                <h3>Recent Scans</h3>
+                <div class="log-actions">
+                    <button onclick="exportToCSV()" class="btn-export">
+                        📥 Export to CSV
+                    </button>
+                    <button onclick="clearAllData()" class="btn-danger">
+                        🗑️ Clear All
+                    </button>
+                </div>
+            </div>
+            <div id="log-container">
+                <p class="no-data">No scans yet. Start scanning to see attendance records.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>NCS Event Management System | Annual Gathering 2026</p>
+            <p class="version">Version 1.0 | Last sync: <span id="lastSync">Never</span></p>
+        </footer>
     </div>
 
-    <!-- Include QR Code Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    
-    <!-- Include Microsoft Graph SDK (for Excel integration) -->
-    <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
-    
-    <!-- Your custom scripts -->
+    <!-- Scripts -->
     <script src="config.js"></script>
     <script src="scanner.js"></script>
 </body>
