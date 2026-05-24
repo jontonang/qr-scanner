@@ -4,7 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annual Gathering 2026 - Attendance</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        header h1 { color: #333; font-size: 2.5em; margin-bottom: 10px; }
+        header p { color: #666; font-size: 1.1em; }
+        .event-display {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .event-display h2 { font-size: 2em; margin-bottom: 10px; }
+        .import-section {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ffc107;
+        }
+        .import-section h3 { color: #856404; margin-bottom: 10px; }
+        .file-input { margin: 10px 0; }
+        .scanner-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .scanner-section h3 { color: #333; margin-bottom: 20px; }
+        #nameInput {
+            width: 100%;
+            padding: 20px;
+            font-size: 20px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        #nameInput:focus {
+            outline: none;
+            border-color: #5568d3;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .suggestions {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .suggestion-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+        .lookup-result {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        .lookup-result h4 { color: #155724; margin-bottom: 10px; }
+        .lookup-result p { margin: 5px 0; color: #155724; }
+        .result {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: none;
+            animation: slideIn 0.5s;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result h2 { color: #155724; margin-bottom: 15px; }
+        .result p { margin: 10px 0; font-size: 16px; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-number { font-size: 3em; font-weight: bold; margin-bottom: 10px; }
+        .stat-label { font-size: 1em; opacity: 0.9; }
+        .log-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .log-section h3 { color: #333; margin-bottom: 15px; }
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-warning:hover { background: #e0a800; }
+        #logContainer {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-entry {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .log-entry p { margin: 5px 0; color: #555; }
+        .log-entry strong { color: #333; }
+        .alert { padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -15,38 +179,362 @@
 
         <div class="event-display">
             <h2>📅 Annual Gathering 2026</h2>
-            <p class="event-subtitle">Attendance Registration</p>
+            <p class="event-subtitle">Attendance Registration with Name Lookup</p>
         </div>
 
+        <!-- Import Name List Section -->
+        <div class="import-section">
+            <h3>📋 Step 1: Load Name List (Do this first!)</h3>
+            <p>Import your attendee list CSV file (Name, Email columns required)</p>
+            <input type="file" id="csvFile" accept=".csv" class="file-input">
+            <button onclick="loadCSV()" class="btn-warning">📂 Load Name List</button>
+            <div id="importStatus"></div>
+        </div>
+
+        <!-- Scanner Section -->
         <div class="scanner-section">
-            <h3>🔍 Scan or Enter Name</h3>
-            <input type="text" id="qrInput" placeholder="Type name and press Enter" autofocus>
-            <div class="scan-status" id="scanStatus">Ready to scan</div>
+            <h3>🔍 Step 2: Enter Attendee Name</h3>
+            <input type="text" id="nameInput" placeholder="Type attendee name..." autocomplete="off">
+            <div id="suggestions" class="suggestions"></div>
+            
+            <div id="lookupResult" class="lookup-result">
+                <h4>✅ Found in Name List:</h4>
+                <p><strong>Name:</strong> <span id="foundName"></span></p>
+                <p><strong>Email:</strong> <span id="foundEmail"></span></p>
+                <button onclick="confirmAttendance()" class="btn-success">✅ Confirm & Record</button>
+                <button onclick="cancelLookup()" class="btn-danger">❌ Cancel</button>
+            </div>
         </div>
 
-        <div class="result" id="result" style="display:none;">
+        <!-- Result Display -->
+        <div class="result" id="result">
             <h2>✅ Attendance Recorded!</h2>
             <p><strong>Name:</strong> <span id="resultName"></span></p>
             <p><strong>Email:</strong> <span id="resultEmail"></span></p>
             <p><strong>Time:</strong> <span id="resultTime"></span></p>
         </div>
 
+        <!-- Statistics -->
         <div class="stats">
             <div class="stat-box">
                 <div class="stat-number" id="totalCount">0</div>
-                <div class="stat-label">Total Attendees</div>
+                <div class="stat-label">Total Checked In</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="nameListCount">0</div>
+                <div class="stat-label">Names in List</div>
             </div>
         </div>
 
+        <!-- Log Section -->
         <div class="log-section">
-            <h3>Recent Scans</h3>
-            <button onclick="exportCSV()" class="btn-export">📥 Export CSV</button>
-            <button onclick="clearAll()" class="btn-clear">🗑️ Clear All</button>
-            <div id="logContainer">No scans yet</div>
+            <h3>Recent Check-ins</h3>
+            <button onclick="exportAttendance()" class="btn-success">📥 Export Attendance CSV</button>
+            <button onclick="exportNameList()" class="btn-primary">📥 Export Name List CSV</button>
+            <button onclick="clearAttendance()" class="btn-danger">🗑️ Clear Attendance</button>
+            <div id="logContainer">No check-ins yet</div>
         </div>
     </div>
 
-    <script src="config.js"></script>
-    <script src="scanner.js"></script>
+    <script>
+        // Global variables
+        let nameList = [];
+        let attendanceLog = [];
+        let currentLookup = null;
+
+        // Load saved data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            setupNameInput();
+            updateDisplay();
+        });
+
+        // Setup name input with autocomplete
+        function setupNameInput() {
+            const input = document.getElementById('nameInput');
+            const suggestions = document.getElementById('suggestions');
+            
+            input.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                
+                const matches = nameList.filter(person => 
+                    person.name.toLowerCase().includes(query)
+                );
+                
+                if (matches.length > 0) {
+                    showSuggestions(matches);
+                } else {
+                    suggestions.style.display = 'none';
+                }
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchName(this.value.trim());
+                }
+            });
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions(matches) {
+            const suggestions = document.getElementById('suggestions');
+            suggestions.innerHTML = '';
+            
+            matches.slice(0, 5).forEach(person => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.innerHTML = `<strong>\${person.name}</strong><br><small>\${person.email}</small>`;
+                div.onclick = () => selectSuggestion(person);
+                suggestions.appendChild(div);
+            });
+            
+            suggestions.style.display = 'block';
+        }
+
+        // Select from suggestions
+        function selectSuggestion(person) {
+            document.getElementById('nameInput').value = person.name;
+            document.getElementById('suggestions').style.display = 'none';
+            searchName(person.name);
+        }
+
+        // Search for name in list
+        function searchName(name) {
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
+            
+            if (nameList.length === 0) {
+                alert('Please load the Name List first!');
+                return;
+            }
+            
+            const found = nameList.find(person => 
+                person.name.toLowerCase() === name.toLowerCase()
+            );
+            
+            if (found) {
+                showLookupResult(found);
+            } else {
+                if (confirm(`"\${name}" not found in Name List.
+
+Record anyway with no email?`)) {
+                    recordAttendance({ name: name, email: 'N/A' });
+                }
+            }
+        }
+
+        // Show lookup result
+        function showLookupResult(person) {
+            currentLookup = person;
+            document.getElementById('foundName').textContent = person.name;
+            document.getElementById('foundEmail').textContent = person.email;
+            document.getElementById('lookupResult').style.display = 'block';
+            document.getElementById('suggestions').style.display = 'none';
+        }
+
+        // Confirm and record attendance
+        function confirmAttendance() {
+            if (currentLookup) {
+                recordAttendance(currentLookup);
+                cancelLookup();
+            }
+        }
+
+        // Cancel lookup
+        function cancelLookup() {
+            document.getElementById('lookupResult').style.display = 'none';
+            document.getElementById('nameInput').value = '';
+            document.getElementById('nameInput').focus();
+            currentLookup = null;
+        }
+
+        // Record attendance
+        function recordAttendance(person) {
+            const record = {
+                event: 'Annual Gathering 2026',
+                name: person.name,
+                email: person.email,
+                time: new Date().toLocaleString('en-SG'),
+                timestamp: new Date().toISOString()
+            };
+            
+            attendanceLog.unshift(record);
+            saveData();
+            showResult(record);
+            updateDisplay();
+            
+            document.getElementById('nameInput').value = '';
+            document.getElementById('nameInput').focus();
+        }
+
+        // Show result
+        function showResult(record) {
+            document.getElementById('resultName').textContent = record.name;
+            document.getElementById('resultEmail').textContent = record.email;
+            document.getElementById('resultTime').textContent = record.time;
+            document.getElementById('result').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('result').style.display = 'none';
+            }, 5000);
+        }
+
+        // Load CSV file
+        function loadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a CSV file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                parseCSV(text);
+            };
+            reader.readAsText(file);
+        }
+
+        // Parse CSV
+        function parseCSV(text) {
+            const lines = text.split('
+');
+            nameList = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const parts = line.split(',').map(p => p.trim().replace(/"/g, ''));
+                if (parts.length >= 2 && parts[0] && parts[1]) {
+                    nameList.push({
+                        name: parts[0],
+                        email: parts[1]
+                    });
+                }
+            }
+            
+            saveData();
+            updateDisplay();
+            
+            const status = document.getElementById('importStatus');
+            status.innerHTML = `<div class="alert alert-success">✅ Loaded \${nameList.length} names successfully!</div>`;
+            
+            document.getElementById('nameInput').focus();
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('totalCount').textContent = attendanceLog.length;
+            document.getElementById('nameListCount').textContent = nameList.length;
+            
+            const logContainer = document.getElementById('logContainer');
+            
+            if (attendanceLog.length === 0) {
+                logContainer.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No check-ins yet</p>';
+                return;
+            }
+            
+            let html = '';
+            attendanceLog.slice(0, 20).forEach(record => {
+                html += `
+                    <div class="log-entry">
+                        <p><strong>\${record.name}</strong></p>
+                        <p>Email: \${record.email}</p>
+                        <p>Time: \${record.time}</p>
+                    </div>
+                `;
+            });
+            
+            logContainer.innerHTML = html;
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('nameList', JSON.stringify(nameList));
+            localStorage.setItem('attendanceLog', JSON.stringify(attendanceLog));
+        }
+
+        // Load saved data
+        function loadSavedData() {
+            const savedNames = localStorage.getItem('nameList');
+            const savedAttendance = localStorage.getItem('attendanceLog');
+            
+            if (savedNames) {
+                nameList = JSON.parse(savedNames);
+            }
+            
+            if (savedAttendance) {
+                attendanceLog = JSON.parse(savedAttendance);
+            }
+        }
+
+        // Export attendance CSV
+        function exportAttendance() {
+            if (attendanceLog.length === 0) {
+                alert('No attendance data to export');
+                return;
+            }
+            
+            let csv = 'Event,Name,Email,Timestamp
+';
+            attendanceLog.forEach(record => {
+                csv += `"\${record.event}","\${record.name}","\${record.email}","\${record.time}"
+`;
+            });
+            
+            downloadCSV(csv, 'Annual_Gathering_2026_Attendance.csv');
+        }
+
+        // Export name list CSV
+        function exportNameList() {
+            if (nameList.length === 0) {
+                alert('No name list to export');
+                return;
+            }
+            
+            let csv = 'Name,Email
+';
+            nameList.forEach(person => {
+                csv += `"\${person.name}","\${person.email}"
+`;
+            });
+            
+            downloadCSV(csv, 'Name_List.csv');
+        }
+
+        // Download CSV
+        function downloadCSV(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Clear attendance
+        function clearAttendance() {
+            if (confirm('Clear all attendance records? This cannot be undone.')) {
+                attendanceLog = [];
+                saveData();
+                updateDisplay();
+                alert('Attendance cleared');
+            }
+        }
+    </script>
 </body>
 </html>
